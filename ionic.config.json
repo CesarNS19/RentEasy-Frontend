@@ -1,0 +1,7 @@
+{
+  "name": "RentEasy",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

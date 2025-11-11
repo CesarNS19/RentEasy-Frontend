@@ -1,0 +1,44 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Propiedades</h4>
+</div>
+
+<div *ngIf="!propiedades || propiedades.length === 0" class="text-center mt-5">
+  <i class="bi bi-house-slash text-muted" style="font-size: 3rem;"></i>
+  <p class="text-muted mt-2">No hay propiedades registradas.</p>
+</div>
+
+<div class="row g-4 scroll-container mt-2" *ngIf="propiedades && propiedades.length > 0">
+  <div class="col-md-4" *ngFor="let p of propiedades">
+    <div class="card h-100 shadow-sm rounded-4">
+      <img *ngIf="p.imagenUrl; else noImagen"
+           [src]="p.imagenUrl"
+           class="card-img-top"
+           style="height: 180px; object-fit: cover;" />
+      <ng-template #noImagen>
+        <div class="d-flex justify-content-center align-items-center bg-light text-muted" style="height: 180px;">
+          <i class="bi bi-image" style="font-size: 3rem;"></i>
+        </div>
+      </ng-template>
+
+      <div class="card-body">
+        <h5 class="text-primary mb-2">{{ p.titulo }}</h5>
+        <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ p.ubicacion }}</p>
+        <p class="mb-1"><i class="bi bi-tag text-warning me-1"></i>{{ p.tipo }}</p>
+        <p class="text-muted small">{{ p.descripcion }}</p>
+        <h6 class="text-success fw-bold">{{ p.precio | currency:'MXN':'symbol':'1.0-0' }}</h6>
+        <p class="text-muted small mb-0"><i class="bi bi-person-circle me-1"></i>
+          Publicado por: {{ p.propietario?.username || 'Desconocido' }}
+        </p>
+      </div>
+
+      <button
+  class="btn btn-outline-primary btn-sm flex-grow-1"
+  (click)="openChat(p.propietario?.id, p.propietario?.username)"
+>
+  <i class="bi bi-chat-dots me-1"></i> Chat
+</button>
+
+
+    </div>
+  </div>
+</div>

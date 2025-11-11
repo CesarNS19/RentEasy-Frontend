@@ -1,0 +1,125 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Propiedades</h4>
+  <button type="button" class="btn btn-gradient-primary px-4 py-2" (click)="abrirModal()">
+    <i class="bi bi-plus-circle me-2"></i> Agregar
+  </button>
+</div>
+
+<div *ngIf="!propiedades || propiedades.length === 0" class="text-center mt-5">
+  <i class="bi bi-house-slash text-muted" style="font-size: 3rem;"></i>
+  <p class="text-muted mt-2">No hay propiedades registradas.</p>
+</div>
+
+<div class="scroll-container" *ngIf="propiedades && propiedades.length > 0">
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let p of propiedades">
+      <div class="card card-hover shadow-sm h-100 border-0 rounded-4">
+        <img *ngIf="p.imagenUrl; else noImagen" 
+             [src]="p.imagenUrl" 
+             class="card-img-top rounded-top-4" 
+             style="height: 180px; object-fit: cover;" />
+
+        <ng-template #noImagen>
+          <div class="d-flex align-items-center justify-content-center bg-light text-muted rounded-top-4" style="height: 180px;">
+            <i class="bi bi-image" style="font-size: 3rem;"></i>
+          </div>
+        </ng-template>
+
+        <div class="card-body py-3 px-3">
+          <h5 class="card-title text-primary mb-2 fw-semibold">{{ p.titulo }}</h5>
+          <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ p.ubicacion }}</p>
+          <p class="mb-1"><i class="bi bi-tag text-warning me-1"></i> {{ p.tipo }}</p>
+          <p class="text-muted small mb-2" style="line-height: 1rem;">{{ p.descripcion }}</p>
+          <h6 class="text-success fw-bold">{{ p.precio | currency:'MXN':'symbol':'1.0-0' }}</h6>
+        </div>
+
+        <div class="card-footer border-0 d-flex gap-2 py-2 px-3">
+          <button class="btn btn-warning btn-sm flex-grow-1 btn-hover-scale" (click)="editarPropiedad(p.id)">
+            <i class="bi bi-pencil-square me-1"></i> Editar
+          </button>
+          <button class="btn btn-danger btn-sm flex-grow-1 btn-hover-scale" (click)="eliminarPropiedad(p.id)">
+            <i class="bi bi-trash me-1"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar Propiedad -->
+<div class="modal fade" id="modalPropiedad" tabindex="-1" aria-labelledby="modalPropiedadLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalPropiedadLabel">
+          <i class="bi bi-house-add"></i> Agregar Propiedad
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="guardarPropiedad($event)">
+          <div class="mb-3">
+            <label>Título</label>
+            <input type="text" class="form-control" [(ngModel)]="propiedad.titulo" name="titulo" required />
+          </div>
+
+          <div class="mb-3">
+            <label>Descripción</label>
+            <textarea class="form-control" [(ngModel)]="propiedad.descripcion" name="descripcion" rows="3" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label>Tipo</label>
+            <input type="text" class="form-control" [(ngModel)]="propiedad.tipo" name="tipo" required />
+          </div>
+
+          <div class="mb-3 position-relative">
+            <label>Ubicación (empieza a escribir)</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="propiedad.ubicacion"
+                   name="ubicacion"
+                   (input)="buscarDireccion()"
+                   autocomplete="off"
+                   required />
+
+            <ul *ngIf="sugerencias.length > 0"
+                class="list-group position-absolute w-100 mt-1 shadow-sm"
+                style="z-index: 1000;">
+              <li *ngFor="let sug of sugerencias"
+                  class="list-group-item list-group-item-action"
+                  (click)="seleccionarDireccion(sug.display_name)">
+                {{ sug.display_name }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="mb-3">
+            <label>Precio</label>
+            <input type="number" class="form-control" [(ngModel)]="propiedad.precio" name="precio" required />
+          </div>
+
+          <div class="mb-3">
+            <label>Imagen</label>
+            <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" />
+          </div>
+
+          <div class="text-center" *ngIf="previewUrl">
+            <img [src]="previewUrl" alt="Vista previa" class="img-fluid rounded mt-2" style="max-height: 200px;">
+          </div>
+
+          <div class="text-end mt-3">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+            <button class="btn btn-primary" type="submit" [disabled]="cargando">
+              <i class="bi" [ngClass]="cargando ? 'bi-hourglass-split' : 'bi-save'"></i>
+              {{ cargando ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

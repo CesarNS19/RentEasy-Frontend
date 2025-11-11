@@ -1,0 +1,30 @@
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+  <div class="col-md-5 col-lg-4">
+    <div class="card bg-white bg-opacity-75 shadow rounded-4 border-0 p-4">
+      <h3 class="text-center mb-4 fw-bold">Iniciar sesión</h3>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Usuario</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-person-fill"></i></span>
+          <input type="text" class="form-control border-start-0" placeholder="Ingresa tu usuario" [(ngModel)]="username">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Contraseña</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock-fill"></i></span>
+          <input type="password" class="form-control border-start-0" placeholder="Ingresa tu contraseña" [(ngModel)]="password">
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 fw-bold" (click)="login()">Entrar</button>
+
+      <div class="mt-3 text-center">
+        <span class="text-muted">¿No tienes cuenta? </span>
+        <a (click)="goRegistro()" class="text-primary fw-semibold">Crear cuenta</a>
+      </div>
+    </div>
+  </div>
+</div>

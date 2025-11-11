@@ -1,0 +1,22 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">
+      <h5>Chat con {{ receptorNombre }}</h5>
+    </div>
+
+    <div #scrollContainer class="card-body" style="height: 400px; overflow-y: auto;">
+      <div *ngFor="let msg of mensajes" class="mb-2">
+        <div [ngClass]="{'text-end': msg.emisor?.id === emisorId, 'text-start': msg.emisor?.id !== emisorId}">
+          <strong>{{ msg.emisor?.nombre }}:</strong>
+          <span>{{ msg.contenido }}</span>
+          <small class="text-muted d-block">{{ msg.fechaEnvio | date:'shortTime' }}</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer d-flex">
+      <input type="text" [(ngModel)]="nuevoMensaje" class="form-control me-2" placeholder="Escribe un mensaje" (keydown.enter)="enviarMensaje()">
+      <button class="btn btn-primary" (click)="enviarMensaje()">Enviar</button>
+    </div>
+  </div>
+</div>
