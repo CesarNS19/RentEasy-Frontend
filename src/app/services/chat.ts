@@ -4,8 +4,8 @@ import * as SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-const API = 'http://localhost:8080/api/chat';
-const WS_URL = 'http://localhost:8080/ws';
+const API = 'http://localhost:8081/api/chat';
+const WS_URL = 'http://localhost:8081/ws';
 
 export interface Mensaje {
   id?: number;

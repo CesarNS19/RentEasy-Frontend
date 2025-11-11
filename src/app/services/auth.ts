@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const API = 'http://localhost:8080/auth';
+const API = 'http://localhost:8081/auth';
 
 export class AuthService {
   private roleSubject = new BehaviorSubject<string | null>(null);

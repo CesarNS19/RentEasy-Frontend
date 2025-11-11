@@ -70,7 +70,6 @@ export class PropiedadesPage implements OnInit {
       return;
     }
 
-    // Navegar a la página de chat pasando ID y nombre del receptor
     this.router.navigate(['/chat', propietarioId], { queryParams: { nombre: propietarioNombre } });
   }
 }

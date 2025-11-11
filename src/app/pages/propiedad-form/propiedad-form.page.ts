@@ -199,7 +199,7 @@ export class PropiedadFormPage implements OnInit {
       const formData = new FormData();
       formData.append('file', this.selectedFile);
 
-      this.http.post('http://localhost:8080/upload/imagen', formData, { responseType: 'text' })
+      this.http.post('http://localhost:8081/upload/imagen', formData, { responseType: 'text' })
         .subscribe({
           next: (url) => guardar(url),
           error: (err) => {
