@@ -19,6 +19,8 @@ export interface Propiedad {
     password?: string;
     role: string;
   };
+
+  promedio?: number;
 }
 
 @Injectable({
@@ -34,7 +36,6 @@ export class PropiedadService {
   listarById(propietarioId: number): Observable<Propiedad[]> {
    return this.http.get<Propiedad[]>(`${API}/listar-por-propietario/${propietarioId}`);
   }
-
 
   obtener(id: number): Observable<Propiedad> {
     return this.http.get<Propiedad>(`${API}/${id}`);
