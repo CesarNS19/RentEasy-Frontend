@@ -1,71 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Client, IMessage } from '@stomp/stompjs';
-import * as SockJS from 'sockjs-client';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
-const API = 'http://localhost:8081/api/chat';
-const WS_URL = 'http://localhost:8081/ws';
+import { Observable } from 'rxjs';
 
 export interface Mensaje {
   id?: number;
+  emisorId: number;
+  receptorId: number;
   contenido: string;
-  fechaEnvio?: string;
-  emisor?: { id: number; nombre: string };
-  receptor?: { id: number; nombre: string };
+  fecha?: string;
+  conversationId: string;
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ChatService {
-  private stompClient: Client;
-  private messageSource = new BehaviorSubject<Mensaje | null>(null);
-  message$ = this.messageSource.asObservable();
+  private API = 'http://localhost:8081/api/chat';
 
-  constructor(private http: HttpClient) {
-    this.stompClient = new Client({
-      webSocketFactory: () => new SockJS(WS_URL),
-      reconnectDelay: 5000,
-    });
-
-    this.stompClient.onConnect = () => {
-      console.log('✅ Conectado al WebSocket');
-      const userId = localStorage.getItem('userId');
-      if (userId) {
-        this.stompClient.subscribe(`/user/${userId}/queue/messages`, (msg: IMessage) => {
-          const mensaje: Mensaje = JSON.parse(msg.body);
-          this.messageSource.next(mensaje);
-        });
-      }
-    };
-
-    this.stompClient.onWebSocketError = (err) => console.error('❌ Error WebSocket:', err);
-    this.stompClient.onStompError = (frame) => console.error('❌ Error STOMP:', frame);
+  constructor(private http: HttpClient) {}
+  getHistory(conversationId: string): Observable<Mensaje[]> {
+    return this.http.get<Mensaje[]>(`${this.API}/history/${conversationId}`);
   }
-
-  connect() {
-    if (!this.stompClient.active) this.stompClient.activate();
+  buildConversationId(a: number, b: number): string {
+    return a < b ? `${a}-${b}` : `${b}-${a}`;
   }
-
-  disconnect() {
-    if (this.stompClient.active) this.stompClient.deactivate();
-  }
-
-  isConnected(): boolean {
-    return this.stompClient.connected;
-  }
-
-  sendMessage(mensaje: Mensaje) {
-    if (this.stompClient.connected) {
-      this.stompClient.publish({
-        destination: '/app/chat.send',
-        body: JSON.stringify(mensaje),
-      });
-    }
-  }
-
-  obtenerMensajes(conversacionId: number): Observable<Mensaje[]> {
-    return this.http.get<Mensaje[]>(`${API}/${conversacionId}`);
+  obtenerConversacion(emisorId: number, receptorId: number): Observable<any> {
+    return this.http.get(`${this.API}/conversacion/${emisorId}/${receptorId}`);
   }
 }

@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'propiedad-form', component: PropiedadFormPage },
   { path: 'home', component: HomePage },
   {
-  path: 'chat/:id',
+  path: 'chat',
   loadComponent: () =>
     import('./pages/chat/chat.page').then((m) => m.ChatPage),
 }

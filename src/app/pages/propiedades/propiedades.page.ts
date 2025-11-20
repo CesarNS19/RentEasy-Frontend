@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 import { Propiedad, PropiedadService } from 'src/app/services/propiedad';
 import { AuthService } from 'src/app/services/auth';
 import Swal from 'sweetalert2';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { CurrencyPipe, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-propiedades',
@@ -16,6 +15,7 @@ import { CurrencyPipe, NgFor } from '@angular/common';
 })
 export class PropiedadesPage implements OnInit {
   propiedades: Propiedad[] = [];
+  currentUserId: number | null = null;
 
   constructor(
     private propiedadService: PropiedadService,
@@ -24,6 +24,7 @@ export class PropiedadesPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.currentUserId = this.auth.getUserId();
     this.cargarPropiedades();
   }
 
@@ -44,32 +45,37 @@ export class PropiedadesPage implements OnInit {
     });
   }
 
-  openChat(propietarioId?: number, propietarioNombre?: string) {
-    if (!propietarioId || !propietarioNombre) {
-      Swal.fire({
-        toast: true,
-        icon: 'warning',
-        title: 'No se puede iniciar chat: propietario desconocido',
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return;
-    }
-
-    const emisorId = this.auth.getUserId();
-    if (!emisorId) {
-      Swal.fire({
-        toast: true,
-        icon: 'warning',
-        title: 'Debes iniciar sesión para chatear',
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return;
-    }
-
-    this.router.navigate(['/chat', propietarioId], { queryParams: { nombre: propietarioNombre } });
+  openChat(propietarioId: number | undefined, propietarioName: string | undefined) {
+  if (!propietarioId || !propietarioName) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      title: 'No se puede abrir el chat, falta información del propietario',
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+    });
+    return;
   }
+
+  if (!this.currentUserId) {
+    Swal.fire({
+      toast: true,
+      icon: 'warning',
+      title: 'Inicia sesión para enviar mensajes',
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+    });
+    return;
+  }
+
+  this.router.navigate(['/chat'], {
+    queryParams: {
+      senderId: this.currentUserId,
+      receiverId: propietarioId,
+      receiverName: propietarioName,
+    },
+  });
+}
 }

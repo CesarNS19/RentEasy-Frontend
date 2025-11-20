@@ -1,22 +1,26 @@
-<div class="container mt-3">
-  <div class="card">
-    <div class="card-header">
-      <h5>Chat con {{ receptorNombre }}</h5>
+<div class="container py-3">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Chat con {{ receiverName }}</h5>
     </div>
 
-    <div #scrollContainer class="card-body" style="height: 400px; overflow-y: auto;">
-      <div *ngFor="let msg of mensajes" class="mb-2">
-        <div [ngClass]="{'text-end': msg.emisor?.id === emisorId, 'text-start': msg.emisor?.id !== emisorId}">
-          <strong>{{ msg.emisor?.nombre }}:</strong>
-          <span>{{ msg.contenido }}</span>
-          <small class="text-muted d-block">{{ msg.fechaEnvio | date:'shortTime' }}</small>
+    <div id="chat-container" class="card-body chat-box" style="height: 65vh; overflow-y: auto;">
+      <div *ngFor="let msg of messages" class="d-flex mb-2"
+        [ngClass]="msg.emisorId === userId ? 'justify-content-end' : 'justify-content-start'">
+
+        <div class="p-2 rounded text-white"
+          [ngClass]="msg.emisorId === userId ? 'bg-success' : 'bg-secondary'">
+          {{ msg.contenido }}
         </div>
       </div>
     </div>
 
-    <div class="card-footer d-flex">
-      <input type="text" [(ngModel)]="nuevoMensaje" class="form-control me-2" placeholder="Escribe un mensaje" (keydown.enter)="enviarMensaje()">
-      <button class="btn btn-primary" (click)="enviarMensaje()">Enviar</button>
+    <div class="card-footer">
+      <form (ngSubmit)="sendMessage()" class="input-group">
+        <input type="text" class="form-control" placeholder="Escribe un mensaje..."
+          [(ngModel)]="message" name="message">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
     </div>
   </div>
 </div>
