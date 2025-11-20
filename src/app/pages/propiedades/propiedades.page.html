@@ -46,25 +46,25 @@
           </ng-template>
         </div>
       </div>
-     <div class="d-flex flex-row justify-content-between p-3">
+     <div class="card-footer d-flex justify-content-between gap-2 p-3 bg-white border-0">
       <button 
-        *ngIf="p.propietario?.id" 
-        (click)="openChat(p.propietario?.id, p.propietario?.username)"
-        class="btn btn-primary btn-sm">
-        <i class="bi bi-chat-dots"></i> Chat
-      </button>
+          *ngIf="p.propietario?.id" 
+          (click)="openChat(p.propietario?.id, p.propietario?.username)"
+          class="btn btn-primary flex-fill d-flex align-items-center justify-content-center gap-1">
+          <i class="bi bi-chat-dots"></i> Chat
+        </button>
 
-      <button 
-        class="btn btn-outline-secondary btn-sm"
-        (click)="openComentarios(p.id)">
-        <i class="bi bi-star"></i> Opinar
-      </button>
+        <button 
+          class="btn btn-warning flex-fill d-flex align-items-center justify-content-center gap-1"
+          (click)="openComentarios(p.id)">
+          <i class="bi bi-star"></i> Opinar
+        </button>
 
-      <button
-        class="btn btn-outline-info btn-sm"
-        (click)="verOpiniones(p.id)">
-        <i class="bi bi-eye"></i> Ver Opiniones
-      </button>
+        <button
+          class="btn btn-info flex-fill d-flex align-items-center justify-content-center gap-1"
+          (click)="verOpiniones(p.id)">
+          <i class="bi bi-eye"></i> Ver Opiniones
+        </button>
     </div>
     </div>
   </div>

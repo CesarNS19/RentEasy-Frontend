@@ -13,6 +13,7 @@ export interface Propiedad {
   precio: number;
   imagenUrl?: string;
   
+  estado?: 'disponible' | 'alquilada';
   propietario?: {
     id: number;
     username: string;
@@ -22,6 +23,7 @@ export interface Propiedad {
 
   promedio?: number;
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +62,10 @@ export class PropiedadService {
     if (precioMin) params.precioMin = precioMin;
     if (precioMax) params.precioMax = precioMax;
     return this.http.get<Propiedad[]>(`${API}/buscar`, { params });
+  }
+
+  editStatus(id: number, estado: 'disponible' | 'alquilada'): Observable<Propiedad> {
+    return this.http.patch<Propiedad>(`${API}/status/${id}`, { estado });
   }
 }
 

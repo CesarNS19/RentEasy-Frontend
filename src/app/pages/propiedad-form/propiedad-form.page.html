@@ -40,6 +40,17 @@
           <button class="btn btn-danger btn-sm flex-grow-1 btn-hover-scale" (click)="eliminarPropiedad(p.id)">
             <i class="bi bi-trash me-1"></i> Eliminar
           </button>
+          <button *ngIf="p.estado === 'alquilada'" 
+                  class="btn btn-success btn-sm flex-grow-1 btn-hover-scale" 
+                  (click)="cambiarEstado(p, 'disponible')">
+            <i class="bi bi-door-open me-1"></i> Disponible
+          </button>
+
+          <button *ngIf="p.estado === 'disponible'" 
+                  class="btn btn-primary btn-sm flex-grow-1 btn-hover-scale" 
+                  (click)="cambiarEstado(p, 'alquilada')">
+            <i class="bi bi-key me-1"></i> Alquilada
+          </button>
         </div>
       </div>
     </div>

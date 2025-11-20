@@ -27,6 +27,7 @@ export class PropiedadFormPage implements OnInit {
     precio: 0,
     imagenUrl: '',
     propietarioId: 1,
+    estado: 'disponible',
   };
 
   cargando = false;
@@ -322,6 +323,36 @@ export class PropiedadFormPage implements OnInit {
               timerProgressBar: true,
             });
           },
+        });
+      }
+    });
+  }
+
+  cambiarEstado(prop: Propiedad, nuevoEstado: 'disponible' | 'alquilada') {
+    this.propiedadService.editStatus(prop.id!, nuevoEstado).subscribe({
+      next: (res) => {
+        prop.estado = res.estado;
+
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          title: `Estado actualizado a ${nuevoEstado}`,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire({
+          toast: true,
+          icon: 'error',
+          title: 'No se pudo actualizar el estado',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
         });
       }
     });
