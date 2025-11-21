@@ -41,10 +41,9 @@ export class LoginPage {
       toast: true,
       icon: 'success',
       title: '¡Bienvenido!',
-      text: 'Has iniciado sesión correctamente',
       position: 'top-end',
       showConfirmButton: false,
-      timer: 2000,
+      timer: 800,
       timerProgressBar: true,
     });
 

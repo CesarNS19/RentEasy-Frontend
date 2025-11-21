@@ -216,7 +216,7 @@ import { PushService } from './services/push';
       position: fixed;
       bottom: 0;
       width: 100%;
-      height: 60px;
+      height: 65px;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -240,7 +240,7 @@ import { PushService } from './services/push';
     .bottom-nav a.active,
     .bottom-nav a:hover {
       transform: scale(1.1);
-      color: #009688; /* color de resalte verde azulado */
+      color: #009688;
     }
 
     .bottom-nav i {
@@ -308,9 +308,9 @@ export class AppComponent implements OnInit {
       title: 'Sesión cerrada',
       position: 'top-end',
       showConfirmButton: false,
-      timer: 1500,
+      timer: 300,
       timerProgressBar: true,
     });
-    setTimeout(() => this.router.navigate(['/login']), 1500);
+    setTimeout(() => this.router.navigate(['/login']), 300);
   }
 }

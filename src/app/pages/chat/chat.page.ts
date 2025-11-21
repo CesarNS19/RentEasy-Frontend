@@ -18,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     IonicModule,
   ],
 })
+
 export class ChatPage implements OnInit, OnDestroy {
   message = '';
   messages: Mensaje[] = [];

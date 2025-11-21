@@ -18,7 +18,7 @@ export class AuthService {
   userIdKey = 'renteasy_userId';
 
   private inactivityTimeout: any;
-  private inactivityLimit = 15 * 60_000;
+  private inactivityLimit = 10 * 60_000;
 
   constructor() {
     const storedRole = localStorage.getItem(this.roleKey);
@@ -56,7 +56,7 @@ export class AuthService {
       Swal.fire({
         toast: true,
         icon: 'info',
-        title: 'Sesión expirada por inactividad',
+        title: 'Sesión expirada',
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000,
@@ -200,6 +200,8 @@ export class AuthService {
     this.roleSubject.next(null);
     this.userSubject.next(null);
     this.clearInactivityTimeout();
+
+    window.location.href = '/login';
   }
 
   getToken() {
