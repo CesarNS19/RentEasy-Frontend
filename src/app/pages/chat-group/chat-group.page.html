@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>chat-group</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="container py-3">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">chat-group</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <div *ngIf="!conversaciones || conversaciones.length === 0" class="text-center text-muted py-5">
+    No tienes conversaciones
+  </div>
+
+  <div class="list-group" *ngIf="conversaciones && conversaciones.length > 0">
+    <button *ngFor="let conv of conversaciones"
+            class="list-group-item list-group-item-action chat-item d-flex align-items-center justify-content-between"
+            (click)="abrirChat(conv)">
+      <div class="d-flex align-items-center">
+        <div class="user-icon d-flex align-items-center justify-content-center">
+          <i class="bi bi-person"></i>
+        </div>
+        <div class="chat-info ms-2">
+          <div class="chat-name">{{ conv.emisorId === userId ? conv.receptorName : conv.emisorName }}</div>
+          <div class="chat-last-message text-truncate">{{ conv.ultimoMensaje.contenido }}</div>
+        </div>
+      </div>
+      <div class="chat-meta text-end">
+        <small class="chat-time text-muted">{{ conv.ultimoMensaje.fecha | date:'shortTime' }}</small>
+        <span *ngIf="conv.unreadCount && conv.unreadCount > 0" class="badge bg-success ms-2">
+          {{ conv.unreadCount }}
+        </span>
+      </div>
+    </button>
+  </div>
+
+</div>

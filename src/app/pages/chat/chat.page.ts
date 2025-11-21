@@ -18,7 +18,6 @@ import { ActivatedRoute, Router } from '@angular/router';
     IonicModule,
   ],
 })
-
 export class ChatPage implements OnInit, OnDestroy {
   message = '';
   messages: Mensaje[] = [];
@@ -45,9 +44,11 @@ export class ChatPage implements OnInit, OnDestroy {
         this.router.navigate(['/propiedades']);
         return;
       }
+
       this.conversationId = this.chatService.buildConversationId(
         this.userId, this.receiverId
       );
+
       this.loadMessages();
       this.initWebSocket();
     });
@@ -57,6 +58,11 @@ export class ChatPage implements OnInit, OnDestroy {
     this.ws.connect(() => {
       this.ws.subscribe(`/topic/conversations/${this.conversationId}`, (msg: any) => {
         const nuevo: Mensaje = JSON.parse(msg.body);
+
+        if (!nuevo.fecha) {
+          nuevo.fecha = new Date().toISOString();
+        }
+
         if (nuevo.emisorId !== this.userId) {
           this.messages.push(nuevo);
           setTimeout(() => this.scrollBottom(), 200);
@@ -67,7 +73,10 @@ export class ChatPage implements OnInit, OnDestroy {
 
   loadMessages() {
     this.chatService.getHistory(this.conversationId).subscribe(res => {
-      this.messages = res;
+      this.messages = res.map(m => ({
+        ...m,
+        fecha: m.fecha || new Date().toISOString()
+      }));
       setTimeout(() => this.scrollBottom(), 200);
     });
   }
@@ -80,6 +89,7 @@ export class ChatPage implements OnInit, OnDestroy {
       receptorId: this.receiverId,
       contenido: this.message,
       conversationId: this.conversationId,
+      fecha: new Date().toISOString()
     };
 
     this.ws.publish(`/app/chat.send/${this.conversationId}`, nuevoMensaje);
@@ -96,5 +106,9 @@ export class ChatPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.ws.disconnect();
+  }
+
+   volverAChatGroup() {
+    this.router.navigate(['/propiedades']);
   }
 }

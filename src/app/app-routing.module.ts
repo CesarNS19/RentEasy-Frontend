@@ -28,6 +28,10 @@ const routes: Routes = [
   {
     path: 'chat-group',
     loadChildren: () => import('./pages/chat-group/chat-group.module').then( m => m.ChatGroupPageModule)
+  },
+  {
+    path: 'chat-details',
+    loadChildren: () => import('./pages/chat-details/chat-details.module').then( m => m.ChatDetailsPageModule)
   }
 ];
 

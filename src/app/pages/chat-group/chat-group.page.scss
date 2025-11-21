@@ -1,0 +1,54 @@
+.chat-item {
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  padding: 10px;
+}
+
+.user-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #ddd;
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.chat-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-name {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.chat-last-message {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: gray;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.chat-time {
+  font-size: 0.75rem;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.5em;
+  border-radius: 50%;
+}

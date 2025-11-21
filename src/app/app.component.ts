@@ -57,7 +57,7 @@ import { PushService } from './services/push';
           <!-- Chats -->
           <li class="sidebar-title">Chats</li>
           <li>
-            <a routerLink="/chat" (click)="closeSidebar()"
+            <a routerLink="/chat-group" (click)="closeSidebar()"
               ><i class="bi bi-chat-dots me-2"></i>Ver chats</a
             >
           </li>
@@ -75,7 +75,7 @@ import { PushService } from './services/push';
         <i class="bi bi-house"></i>
         <span>Inicio</span>
       </a>
-      <a routerLink="/chat" routerLinkActive="active">
+      <a routerLink="/chat-group" routerLinkActive="active">
         <i class="bi bi-chat-dots"></i>
         <span>Chats</span>
       </a>
@@ -280,13 +280,14 @@ export class AppComponent implements OnInit {
       this.cd.detectChanges();
     });
 
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
-        const hiddenRoutes = ['/', '/login', '/registro'];
-        this.showLayout = !hiddenRoutes.includes(event.urlAfterRedirects);
-        this.isSidebarOpen = false;
-      });
+   this.router.events
+    .pipe(filter((event) => event instanceof NavigationEnd))
+    .subscribe((event: any) => {
+      const url = event.urlAfterRedirects.split('?')[0];
+      const hiddenRoutes = ['/', '/login', '/registro', '/chat-details', '/chat'];
+      this.showLayout = !hiddenRoutes.includes(url);
+      this.isSidebarOpen = false;
+    });
 
     this.pushService.requestPermission();
     this.pushService.listenMessages();
