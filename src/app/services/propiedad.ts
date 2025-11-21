@@ -4,6 +4,13 @@ import { Observable } from 'rxjs';
 
 const API = 'http://localhost:8081/propiedades';
 
+export interface Propietario {
+  id: number;
+  username: string;
+  password?: string;
+  role: string;
+}
+
 export interface Propiedad {
   id: number;
   titulo: string;
@@ -11,23 +18,12 @@ export interface Propiedad {
   tipo: string;
   ubicacion: string;
   precio: number;
-
-  // 🔹 Varias imágenes
   imagenes?: string[];
-
-  // Opcionalmente, puedes mantener imagenUrl si usas una principal
   imagenUrl?: string;
-
   estado?: 'disponible' | 'alquilada' | string;
-
-  propietario?: {
-    id: number;
-    username: string;
-    password?: string;
-    role: string;
-  };
-
+  propietario?: Propietario;
   promedio?: number;
+  rating?: number;
 }
 
 @Injectable({
@@ -67,12 +63,10 @@ export class PropiedadService {
     precioMax?: number
   ): Observable<Propiedad[]> {
     let params = new HttpParams();
-
     if (ubicacion?.trim()) params = params.set('ubicacion', ubicacion);
     if (tipo?.trim()) params = params.set('tipo', tipo);
     if (precioMin !== undefined) params = params.set('precioMin', precioMin.toString());
     if (precioMax !== undefined) params = params.set('precioMax', precioMax.toString());
-
     return this.http.get<Propiedad[]>(`${API}/buscar`, { params });
   }
 
@@ -81,4 +75,7 @@ export class PropiedadService {
   }
 }
 
-export const PropiedadServiceProvider = { provide: PropiedadService, useClass: PropiedadService };
+export const PropiedadServiceProvider = {
+  provide: PropiedadService,
+  useClass: PropiedadService
+};

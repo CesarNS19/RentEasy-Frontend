@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { debounceTime, Subject } from 'rxjs';
-import * as bootstrap from 'bootstrap';      
-import { CurrencyPipe, NgFor } from '@angular/common'; 
-import { Propiedad, PropiedadService } from 'src/app/services/propiedad';
-import { CommonModule } from '@angular/common'; 
+import * as bootstrap from 'bootstrap';
+import { CurrencyPipe, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Propiedad, PropiedadService } from 'src/app/services/propiedad';
 import { AuthService } from 'src/app/services/auth';
 
 @Component({
@@ -18,23 +18,25 @@ import { AuthService } from 'src/app/services/auth';
   standalone: true
 })
 export class PropiedadFormPage implements OnInit {
+
   propiedades: Propiedad[] = [];
-  propiedad: any = {
-    id: null,
+  selectedFiles: File[] = [];
+  previewUrls: string[] = [];
+  existingImages: string[] = [];
+
+  propiedad: Propiedad = {
+    id: null as any,
     titulo: '',
     descripcion: '',
     tipo: '',
     ubicacion: '',
     precio: 0,
-    imagenUrl: '',
-    propietarioId: 1,
+    imagenes: [],
+    propietario: { id: 1, username: '', role: '' },
     estado: 'disponible',
   };
 
   cargando = false;
-  selectedFile: File | null = null;
-  previewUrl: string | null = null;
-
   sugerencias: any[] = [];
   private busqueda = new Subject<string>();
 
@@ -44,9 +46,7 @@ export class PropiedadFormPage implements OnInit {
     private propiedadService: PropiedadService,
     private auth: AuthService
   ) {
-    this.busqueda
-      .pipe(debounceTime(400))
-      .subscribe((texto) => this.obtenerSugerencias(texto));
+    this.busqueda.pipe(debounceTime(400)).subscribe((texto) => this.obtenerSugerencias(texto));
   }
 
   ngOnInit() {
@@ -55,21 +55,23 @@ export class PropiedadFormPage implements OnInit {
 
   abrirModal() {
     this.propiedad = {
-      id: null,
+      id: null as any,
       titulo: '',
       descripcion: '',
       tipo: '',
       ubicacion: '',
       precio: 0,
-      imagenUrl: '',
-      propietarioId: this.auth.getUserId() || 1,
+      imagenes: [],
+      propietario: { id: this.auth.getUserId() || 1, username: '', role: '' },
+      estado: 'disponible',
     };
-    this.previewUrl = null;
-    this.selectedFile = null;
 
-    const modalEl = document.getElementById('modalPropiedad');
-    const modal = new bootstrap.Modal(modalEl!);
-    modal.show();
+    this.previewUrls = [];
+    this.selectedFiles = [];
+    this.existingImages = [];
+
+    const modalEl = document.getElementById('modalPropiedad')!;
+    new bootstrap.Modal(modalEl).show();
   }
 
   buscarDireccion() {
@@ -81,13 +83,10 @@ export class PropiedadFormPage implements OnInit {
   }
 
   obtenerSugerencias(texto: string) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-      texto
-    )}&addressdetails=1&limit=5&countrycodes=mx`;
-
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&addressdetails=1&limit=5&countrycodes=mx`;
     this.http.get<any[]>(url).subscribe({
       next: (data) => (this.sugerencias = data),
-      error: (err) => console.error('Error al buscar direcciones', err),
+      error: () => this.showToast('warning', 'Error al buscar direcciones')
     });
   }
 
@@ -96,125 +95,126 @@ export class PropiedadFormPage implements OnInit {
     this.sugerencias = [];
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = () => (this.previewUrl = reader.result as string);
-      reader.readAsDataURL(file);
+  onFilesSelected(event: any) {
+    const files: FileList = event.target.files;
+
+    if ((this.previewUrls.length + files.length) > 4) {
+      this.showToast('warning', 'Solo puedes subir hasta 4 imágenes en total');
+      return;
     }
+
+    Array.from(files).forEach(file => {
+      this.selectedFiles.push(file);
+
+      const reader = new FileReader();
+      reader.onload = () => this.previewUrls.push(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  eliminarImagen(index: number) {
+    if (index < this.existingImages.length) {
+      this.existingImages.splice(index, 1);
+    } else {
+      const newIndex = index - this.existingImages.length;
+      this.selectedFiles.splice(newIndex, 1);
+    }
+
+    this.previewUrls.splice(index, 1);
   }
 
   guardarPropiedad(event: Event) {
     event.preventDefault();
 
-    if (!this.propiedad.titulo.trim() || !this.propiedad.descripcion.trim() || !this.propiedad.tipo.trim() || !this.propiedad.ubicacion.trim() || !this.propiedad.precio || this.propiedad.precio <= 0) {
-      Swal.fire({
-        toast: true,
-        icon: 'warning',
-        title: 'Por favor llena todos los campos antes de guardar.',
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        background: '#fffbe6',
-        color: '#664d03',
-      });
+    if (!this.propiedad.titulo.trim() || !this.propiedad.descripcion.trim() ||
+        !this.propiedad.tipo.trim() || !this.propiedad.ubicacion.trim() ||
+        !this.propiedad.precio || this.propiedad.precio <= 0) {
+      this.showToast('warning', 'Completa todos los campos antes de guardar');
+      return;
+    }
+
+    const userId = this.auth.getUserId();
+    if (!userId) {
+      this.showToast('warning', 'No hay usuario logueado');
       return;
     }
 
     this.cargando = true;
-    const userId = this.auth.getUserId();
-    if (!userId) {
-      Swal.fire({
-        toast: true,
-        icon: 'warning',
-        title: 'No hay usuario logueado',
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-      });
-      this.cargando = false;
-      return;
-    }
+    this.propiedad.propietario = { id: userId, username: '', role: '' };
 
-    this.propiedad.propietarioId = userId;
+    const guardar = (imagenesUrls?: string[]) => {
+      const todasImagenes = [...(this.existingImages || [])];
+      if (imagenesUrls && imagenesUrls.length > 0) {
+        todasImagenes.push(...imagenesUrls);
+      }
 
-    const guardar = (imagenUrl?: string) => {
-      if (imagenUrl) this.propiedad.imagenUrl = imagenUrl;
+      if (todasImagenes.length === 0) {
+        this.showToast('warning', 'Debes agregar al menos una imagen');
+        this.cargando = false;
+        return;
+      }
+
+      const payload: any = {
+        titulo: this.propiedad.titulo,
+        descripcion: this.propiedad.descripcion,
+        tipo: this.propiedad.tipo,
+        ubicacion: this.propiedad.ubicacion,
+        precio: this.propiedad.precio,
+        estado: this.propiedad.estado ?? 'disponible',
+        propietarioId: userId,
+        imagenes: todasImagenes,
+        imagenUrl: todasImagenes[0]
+      };
+
+      if (this.propiedad.id) {
+        payload.id = this.propiedad.id;
+      }
 
       const request$ = this.propiedad.id
-        ? this.propiedadService.editar(this.propiedad.id, this.propiedad)
-        : this.propiedadService.crear(this.propiedad);
+        ? this.propiedadService.editar(this.propiedad.id, payload)
+        : this.propiedadService.crear(payload);
 
       request$.subscribe({
         next: () => {
-          Swal.fire({
-            toast: true,
-            icon: 'success',
-            title: this.propiedad.id ? 'Propiedad editada correctamente' : 'Propiedad guardada correctamente',
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2500,
-            timerProgressBar: true,
-          });
+          this.showToast('success', this.propiedad.id ? 'Propiedad editada' : 'Propiedad creada');
 
           const modalEl = document.getElementById('modalPropiedad');
-          const modal = bootstrap.Modal.getInstance(modalEl!);
-          modal?.hide();
+          bootstrap.Modal.getInstance(modalEl!)?.hide();
 
           this.propiedad = {
-            id: null,
+            id: null as any,
             titulo: '',
             descripcion: '',
             tipo: '',
             ubicacion: '',
             precio: 0,
-            imagenUrl: '',
-            propietarioId: userId,
+            imagenes: [],
+            estado: 'disponible',
+            propietario: { id: userId, username: '', role: '' }
           };
-          this.previewUrl = null;
-          this.selectedFile = null;
+          this.previewUrls = [];
+          this.selectedFiles = [];
+          this.existingImages = [];
           this.cargando = false;
 
           this.cargarPropiedades();
         },
-        error: (err) => {
-          console.error(err);
-          Swal.fire({
-            toast: true,
-            icon: 'error',
-            title: 'No se pudo guardar la propiedad',
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2500,
-            timerProgressBar: true,
-          });
+        error: () => {
+          this.showToast('error', 'Error al guardar la propiedad');
           this.cargando = false;
         }
       });
     };
 
-    if (this.selectedFile) {
+    if (this.selectedFiles.length > 0) {
       const formData = new FormData();
-      formData.append('file', this.selectedFile);
+      this.selectedFiles.forEach(file => formData.append('files', file));
 
-      this.http.post('http://localhost:8081/upload/imagen', formData, { responseType: 'text' })
+      this.http.post<string[]>('http://localhost:8081/upload/imagenes', formData)
         .subscribe({
-          next: (url) => guardar(url),
-          error: (err) => {
-            console.error(err);
-            Swal.fire({
-              toast: true,
-              icon: 'error',
-              title: 'No se pudo subir la imagen',
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2500,
-              timerProgressBar: true,
-            });
+          next: (urls) => guardar(urls),
+          error: () => {
+            this.showToast('error', 'Error al subir imágenes');
             this.cargando = false;
           }
         });
@@ -229,18 +229,7 @@ export class PropiedadFormPage implements OnInit {
 
     this.propiedadService.listarById(userId).subscribe({
       next: (res) => (this.propiedades = res),
-      error: (err) => {
-        console.error('Error al listar propiedades', err);
-        Swal.fire({
-          toast: true,
-          icon: 'error',
-          title: 'No se pudieron cargar las propiedades',
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      },
+      error: () => this.showToast('error', 'Error al cargar propiedades')
     });
   }
 
@@ -248,83 +237,36 @@ export class PropiedadFormPage implements OnInit {
     this.propiedadService.obtener(id).subscribe({
       next: (p) => {
         this.propiedad = {
-          id: p.id,
-          titulo: p.titulo,
-          descripcion: p.descripcion,
-          tipo: p.tipo,
-          ubicacion: p.ubicacion,
-          precio: p.precio,
-          imagenUrl: p.imagenUrl || '',
-          propietarioId: p.propietario?.id || 1,
+          ...p,
+          rating: p.rating || 3,
+          imagenes: p.imagenes || []
         };
-        this.previewUrl = p.imagenUrl || null;
 
-        const modalEl = document.getElementById('modalPropiedad');
-        const modal = new bootstrap.Modal(modalEl!);
-        modal.show();
+        this.existingImages = [...(this.propiedad.imagenes || [])];
+        this.previewUrls = [...this.existingImages];
+        this.selectedFiles = [];
+
+        new bootstrap.Modal(document.getElementById('modalPropiedad')!).show();
       },
-      error: (err) => {
-        console.error(err);
-        Swal.fire({
-          toast: true,
-          icon: 'error',
-          title: 'No se pudo cargar la propiedad',
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      }
+      error: () => this.showToast('error', 'No se pudo cargar la propiedad')
     });
   }
 
   eliminarPropiedad(id: number) {
     Swal.fire({
-      title: '¿Eliminar propiedad?',
-      text: 'Esta acción no se puede deshacer',
+      toast: true,
+      position: 'top-end',
       icon: 'warning',
+      title: '¿Eliminar propiedad?',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Eliminar',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Eliminando...',
-          text: 'Por favor espera un momento',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading(),
-        });
-
-        this.propiedadService.eliminar(id).subscribe({
-          next: () => {
-            Swal.close();
-            Swal.fire({
-              toast: true,
-              icon: 'success',
-              title: 'Propiedad eliminada correctamente',
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2500,
-              timerProgressBar: true,
-            });
-            this.cargarPropiedades();
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.close();
-            Swal.fire({
-              toast: true,
-              icon: 'error',
-              title: 'No se pudo eliminar la propiedad',
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2500,
-              timerProgressBar: true,
-            });
-          },
-        });
+        this.propiedadService.eliminar(id).subscribe(() => {
+          this.showToast('success', 'Propiedad eliminada');
+          this.cargarPropiedades();
+        }, () => this.showToast('error', 'No se pudo eliminar la propiedad'));
       }
     });
   }
@@ -333,29 +275,21 @@ export class PropiedadFormPage implements OnInit {
     this.propiedadService.editStatus(prop.id!, nuevoEstado).subscribe({
       next: (res) => {
         prop.estado = res.estado;
-
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          title: `Estado actualizado a ${nuevoEstado}`,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
+        this.showToast('success', `Estado actualizado a ${nuevoEstado}`);
       },
-      error: (err) => {
-        console.error(err);
-        Swal.fire({
-          toast: true,
-          icon: 'error',
-          title: 'No se pudo actualizar el estado',
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      }
+      error: () => this.showToast('error', 'No se pudo actualizar el estado')
+    });
+  }
+
+  showToast(icon: 'success' | 'error' | 'warning', title: string) {
+    Swal.fire({
+      toast: true,
+      icon,
+      title,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      timerProgressBar: true,
     });
   }
 }

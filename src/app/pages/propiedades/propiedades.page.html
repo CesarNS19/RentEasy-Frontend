@@ -10,14 +10,20 @@
 <div class="row g-4 scroll-container mt-1" *ngIf="propiedades && propiedades.length > 0">
   <div class="col-md-4" *ngFor="let p of propiedades">
     <div class="card card-propiedad h-100 shadow-sm rounded-4">
-      <img *ngIf="p.imagenUrl; else noImagen"
-           [src]="p.imagenUrl"
-           class="card-img-top" />
-      <ng-template #noImagen>
-        <div class="placeholder-img">
-          <i class="bi bi-image" style="font-size: 3rem;"></i>
-        </div>
-      </ng-template>
+       <ng-container *ngIf="p.imagenes && p.imagenes.length > 0; else noImagen">
+      <div class="scroll-images d-flex overflow-auto mb-2" style="scroll-snap-type: x mandatory;">
+        <img *ngFor="let img of p.imagenes"
+             [src]="img"
+             class="d-block me-2"
+             style="height:120px; width:100%; min-width:100%; object-fit:contain; background-color:#f1f1f1; border-top-left-radius:1rem; border-top-right-radius:1rem; scroll-snap-align: start;">
+      </div>
+    </ng-container>
+
+    <ng-template #noImagen>
+      <div class="placeholder-img d-flex justify-content-center align-items-center" style="height:180px; background-color:#f1f1f1; border-top-left-radius:1rem; border-top-right-radius:1rem;">
+        <i class="bi bi-image" style="font-size: 3rem;"></i>
+      </div>
+    </ng-template>
       <div class="card-body">
         <div class="row mb-1 align-items-center">
           <div class="col-auto d-flex align-items-center">
