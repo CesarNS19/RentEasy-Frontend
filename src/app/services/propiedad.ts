@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 const API = 'http://localhost:8081/propiedades';
@@ -11,9 +11,15 @@ export interface Propiedad {
   tipo: string;
   ubicacion: string;
   precio: number;
+
+  // 🔹 Varias imágenes
+  imagenes?: string[];
+
+  // Opcionalmente, puedes mantener imagenUrl si usas una principal
   imagenUrl?: string;
-  
-  estado?: 'disponible' | 'alquilada';
+
+  estado?: 'disponible' | 'alquilada' | string;
+
   propietario?: {
     id: number;
     username: string;
@@ -24,9 +30,8 @@ export interface Propiedad {
   promedio?: number;
 }
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PropiedadService {
   constructor(private http: HttpClient) {}
@@ -36,7 +41,7 @@ export class PropiedadService {
   }
 
   listarById(propietarioId: number): Observable<Propiedad[]> {
-   return this.http.get<Propiedad[]>(`${API}/listar-por-propietario/${propietarioId}`);
+    return this.http.get<Propiedad[]>(`${API}/listar-por-propietario/${propietarioId}`);
   }
 
   obtener(id: number): Observable<Propiedad> {
@@ -55,12 +60,19 @@ export class PropiedadService {
     return this.http.delete<void>(`${API}/eliminar/${id}`);
   }
 
-  filtrar(ubicacion?: string, tipo?: string, precioMin?: number, precioMax?: number): Observable<Propiedad[]> {
-    const params: any = {};
-    if (ubicacion) params.ubicacion = ubicacion;
-    if (tipo) params.tipo = tipo;
-    if (precioMin) params.precioMin = precioMin;
-    if (precioMax) params.precioMax = precioMax;
+  filtrar(
+    ubicacion?: string,
+    tipo?: string,
+    precioMin?: number,
+    precioMax?: number
+  ): Observable<Propiedad[]> {
+    let params = new HttpParams();
+
+    if (ubicacion?.trim()) params = params.set('ubicacion', ubicacion);
+    if (tipo?.trim()) params = params.set('tipo', tipo);
+    if (precioMin !== undefined) params = params.set('precioMin', precioMin.toString());
+    if (precioMax !== undefined) params = params.set('precioMax', precioMax.toString());
+
     return this.http.get<Propiedad[]>(`${API}/buscar`, { params });
   }
 

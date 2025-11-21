@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/services/auth';
 @Component({
   selector: 'app-propiedad-form',
   templateUrl: './propiedad-form.page.html',
+  styleUrls: ['./propiedad-form.page.scss'],
   imports: [NgFor, CurrencyPipe, CommonModule, FormsModule],
   standalone: true
 })

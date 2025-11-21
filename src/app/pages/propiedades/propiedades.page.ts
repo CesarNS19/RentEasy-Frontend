@@ -13,6 +13,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule, NgFor, CurrencyPipe],
   templateUrl: './propiedades.page.html',
+  styleUrls: ['./propiedades.page.scss'],
 })
 export class PropiedadesPage implements OnInit {
   propiedades: Propiedad[] = [];
@@ -88,7 +89,7 @@ export class PropiedadesPage implements OnInit {
       Swal.fire({
         toast: true,
         icon: 'warning',
-        title: 'No puedes enviarte un mensaje a ti mismo',
+        title: 'No puedes iniciar un chat con tus propiedades',
         position: 'top-end',
         showConfirmButton: false,
         timer: 2500,

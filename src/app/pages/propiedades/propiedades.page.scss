@@ -1,0 +1,154 @@
+.card-propiedad {
+  border-radius: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  background-color: #ffffff;
+}
+
+.card-propiedad:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-propiedad img {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  height: 150px;
+  object-fit: contain;
+}
+
+.card-body h5 {
+  color: #009688;
+  font-weight: 600;
+}
+
+.card-body p {
+  color: #212529;
+  margin-bottom: 0.3rem;
+}
+
+.card-body .precio {
+  color: #004d40;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.card-footer-propiedad {
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.card-footer-propiedad .btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-chat {
+  color: #fff;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-chat:hover {
+  background-color: #00796b;
+  border-color: #00796b;
+}
+
+.btn-opinar {
+  background-color: #ff9d00;
+  border-color: #ff9d00;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-opinar:hover {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+.btn-ver {
+  background-color: #319236;
+  border-color: #319236;
+  color: #fff;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-ver:hover {
+  background-color: #00695c;
+  border-color: #00695c;
+}
+
+.placeholder-img {
+  background-color: #e0f2f1;
+  color: #607d8b;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.modal-content {
+  border-radius: 1rem;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.modal-header {
+  background-color: #009688;
+  color: #fff;
+  font-weight: 600;
+}
+
+.modal-footer .btn-primary {
+  background-color: #009688;
+  border-color: #009688;
+  color: #fff;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #00796b;
+  border-color: #00796b;
+}
+
+.precio {
+  color: #004d40;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.rating {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.rating i {
+  font-size: 1rem;
+  color: #ffb400;
+}
+
+.btn-save,
+.btn-cl {
+  height: 30px;
+  font-size: 13px;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+}
+
+.txt-propiedades{
+  color : #004d40;
+}

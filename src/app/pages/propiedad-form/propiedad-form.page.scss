@@ -1,0 +1,180 @@
+.card-propiedad {
+  border-radius: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  background-color: white;
+}
+.card-propiedad:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.card-propiedad img {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  height: 150px;
+  object-fit: contain;
+  background-color: #f1f1f1;
+}
+.card-body h5 {
+  color: #009688;
+  font-weight: 600;
+}
+.card-body p {
+  color: #212529;
+  margin-bottom: 0.3rem;
+}
+.card-body .precio {
+  color: #004d40;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+.card-footer-propiedad {
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.card-footer-propiedad .btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn-chat {
+  background-color: #009688;
+  border-color: #009688;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-chat {
+  background-color: #009688;
+  border-color: #009688;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-chat1 {
+  background-color: #ff9d00;
+  border-color: #ff9d00;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-chat:hover {
+  background-color: #00796b;
+  border-color: #00796b;
+}
+
+.btn-opinar {
+  background-color: #ff0000;
+  border-color: #ff0000;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+.btn-opinar:hover {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+.btn-editar {
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-add {
+  background-color: #00796b;
+  border-color: #00796b;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-save {
+  background-color: #00796b;
+  border-color: #00796b;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+}
+
+.btn-cl {
+  height: 30px;
+  font-size: 13px;
+}
+
+.placeholder-img {
+  background-color: #e0f2f1;
+  color: #607d8b;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+.modal-content {
+  border-radius: 1rem;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+.modal-header {
+  background-color: #009688;
+  color: white;
+  font-weight: 600;
+}
+.modal-footer .btn-primary {
+  background-color: #009688;
+  border-color: #009688;
+  color: white;
+}
+.modal-footer .btn-primary:hover {
+  background-color: #00796b;
+  border-color: #00796b;
+}
+.modal-footer .btn-secondary {
+  background-color: #004d40;
+  border-color: #004d40;
+  color: white;
+}
+.modal-footer .btn-secondary:hover {
+  background-color: #00695c;
+  border-color: #00695c;
+}
+.rating {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.rating i {
+  font-size: 1rem;
+  color: #ffb400;
+}
+
+.estado-prop {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.estado-prop i {
+  font-size: 1rem;
+}
+
+.txt-propiedades{
+  color : #004d40;
+}
+
+.carousel-item img {
+  cursor: pointer;
+}
+.card-footer-propiedad .btn {
+  font-size: 12px;
+  padding: 4px 8px;
+}

@@ -1,5 +1,5 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h4 class="mb-0">Propiedades</h4>
+<div class="d-flex justify-content-between align-items-center text-center">
+  <h4 class="text-center txt-propiedades">Propiedades</h4>
 </div>
 
 <div *ngIf="!propiedades || propiedades.length === 0" class="text-center mt-5">
@@ -7,82 +7,92 @@
   <p class="text-muted mt-2">No hay propiedades registradas.</p>
 </div>
 
-<div class="row g-4 scroll-container mt-2" *ngIf="propiedades && propiedades.length > 0">
+<div class="row g-4 scroll-container mt-1" *ngIf="propiedades && propiedades.length > 0">
   <div class="col-md-4" *ngFor="let p of propiedades">
-    <div class="card h-100 shadow-sm rounded-4">
-      
+    <div class="card card-propiedad h-100 shadow-sm rounded-4">
       <img *ngIf="p.imagenUrl; else noImagen"
            [src]="p.imagenUrl"
-           class="card-img-top"
-           style="height: 180px; object-fit: cover;" />
+           class="card-img-top" />
       <ng-template #noImagen>
-        <div class="d-flex justify-content-center align-items-center bg-light text-muted" style="height: 180px;">
+        <div class="placeholder-img">
           <i class="bi bi-image" style="font-size: 3rem;"></i>
         </div>
       </ng-template>
-
       <div class="card-body">
-        <h5 class="text-primary mb-2">{{ p.titulo }}</h5>
-        <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ p.ubicacion }}</p>
+        <div class="row mb-1 align-items-center">
+          <div class="col-auto d-flex align-items-center">
+            <i class="bi bi-person-circle me-1"></i>
+            <span>Publicado por {{ p.propietario?.username || 'Desconocido' }}</span>
+          </div>
+          
+          <div class="col-auto ms-auto">
+            <ng-container *ngIf="(p.promedio ?? 0) > 0; else noRating">
+              <span class="rating d-flex align-items-center">
+                <i class="bi bi-star-fill me-1"></i>
+                {{ p.promedio | number:'1.1-1' }} / 5
+              </span>
+            </ng-container>
+            <ng-template #noRating>
+              <span class="rating text-muted small">Sin calificaciones</span>
+            </ng-template>
+          </div>
+        </div>
+        <h5>
+          <i class="bi bi-house-door me-2 text-success"></i>
+          {{ p.titulo }}
+        </h5>
+        <div class="row mb-1">
+          <div class="col-6">
+            <i class="bi bi-card-text me-1 text-secondary"></i>
+            <p class="text-muted small mb-1 d-inline">{{ p.descripcion }}</p>
+          </div>
+          <div class="col-6">
+            <i class="bi bi-tag text-warning me-1"></i>{{ p.tipo }}
+          </div>
+        </div>
+        <div class="col-12">
+            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ p.ubicacion }}
+          </div>
 
-        <p class="mb-1"><i class="bi bi-tag text-warning me-1"></i>{{ p.tipo }}</p>
-
-        <p class="text-muted small">{{ p.descripcion }}</p>
-
-        <h6 class="text-success fw-bold">{{ p.precio | currency:'MXN':'symbol':'1.0-0' }}</h6>
-
-        <p class="text-muted small mb-1">
-          <i class="bi bi-person-circle me-1"></i>Publicado por: 
-          {{ p.propietario?.username || 'Desconocido' }}
-        </p>
-
-        <div class="mt-2">
-          <span *ngIf="(p.promedio ?? 0) > 0; else noRating">
-            <i class="bi bi-star-fill text-warning"></i>
-            {{ p.promedio | number:'1.1-1' }} / 5
-          </span>
-          <ng-template #noRating>
-            <span class="text-muted small">Sin calificaciones</span>
-          </ng-template>
+        <div class="row mb-1 align-items-center">
+          <div class="col-auto">
+            <h6 class="precio mb-0">{{ p.precio | currency:'MXN':'symbol':'1.0-0' }}</h6>
+          </div>
         </div>
       </div>
-     <div class="card-footer d-flex justify-content-between gap-2 p-3 bg-white border-0">
-      <button 
-          *ngIf="p.propietario?.id" 
-          (click)="openChat(p.propietario?.id, p.propietario?.username)"
-          class="btn btn-primary flex-fill d-flex align-items-center justify-content-center gap-1">
+      <div class="card-footer-propiedad">
+        <button *ngIf="p.propietario?.id" 
+                class="btn btn-chat btn-primary" 
+                (click)="openChat(p.propietario?.id, p.propietario?.username)">
           <i class="bi bi-chat-dots"></i> Chat
         </button>
 
-        <button 
-          class="btn btn-warning flex-fill d-flex align-items-center justify-content-center gap-1"
-          (click)="openComentarios(p.id)">
-          <i class="bi bi-star"></i> Opinar
+        <button class="btn btn-ver" (click)="verOpiniones(p.id)">
+          <i class="bi bi-chat-left-text me-1"></i> Comentarios
         </button>
 
-        <button
-          class="btn btn-info flex-fill d-flex align-items-center justify-content-center gap-1"
-          (click)="verOpiniones(p.id)">
-          <i class="bi bi-eye"></i> Ver Opiniones
+        <button class="btn btn-opinar" (click)="openComentarios(p.id)">
+          <i class="bi bi-star"></i> Opinar
         </button>
-    </div>
+      </div>
     </div>
   </div>
 </div>
 
+
+<!-- Modal Comentario -->
 <div class="modal fade" id="comentarioModal" tabindex="-1" aria-labelledby="comentarioModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="comentarioModalLabel">Dejar opinión</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
         <div class="mb-3">
           <label for="comentarioTexto" class="form-label">Comentario</label>
           <textarea id="comentarioTexto" class="form-control" rows="3" [(ngModel)]="nuevoComentario.mensaje"></textarea>
         </div>
-
         <div class="mb-3">
           <label class="form-label">Calificación</label>
           <select class="form-select" [(ngModel)]="nuevoComentario.estrellas">
@@ -95,8 +105,12 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="guardarComentario()">Enviar</button>
+        <button type="button" class="btn btn-secondary btn-cl d-flex align-items-center justify-content-center" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary btn-save d-flex align-items-center justify-content-center" (click)="guardarComentario()">
+          Enviar
+        </button>
       </div>
     </div>
   </div>
@@ -108,7 +122,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Opiniones</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
         <div *ngIf="comentarios.length > 0; else noComments">
@@ -128,10 +142,8 @@
         </ng-template>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-secondary btn-cl" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
-
-
