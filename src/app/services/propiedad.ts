@@ -1,35 +1,35 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+  import { Injectable } from '@angular/core';
+  import { HttpClient, HttpParams } from '@angular/common/http';
+  import { Observable } from 'rxjs';
 
-const API = 'http://localhost:8081/propiedades';
+  const API = 'http://localhost:8081/propiedades';
 
-export interface Propietario {
-  id: number;
-  username: string;
-  password?: string;
-  role: string;
-}
+  export interface Propietario {
+    id: number;
+    username: string;
+    password?: string;
+    role: string;
+  }
 
-export interface Propiedad {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  tipo: string;
-  ubicacion: string;
-  precio: number;
-  imagenes?: string[];
-  imagenUrl?: string;
-  estado?: 'disponible' | 'alquilada' | string;
-  propietario?: Propietario;
-  promedio?: number;
-  rating?: number;
-}
+  export interface Propiedad {
+    id: number;
+    titulo: string;
+    descripcion: string;
+    tipo: string;
+    ubicacion: string;
+    precio: number;
+    imagenes?: string[];
+    imagenUrl?: string;
+    estado?: 'disponible' | 'alquilada' | string;
+    propietario?: Propietario;
+    promedio?: number;
+    rating?: number;
+  }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class PropiedadService {
+  @Injectable({
+    providedIn: 'root',
+  })
+  export class PropiedadService {
   constructor(private http: HttpClient) {}
 
   listar(): Observable<Propiedad[]> {
@@ -72,10 +72,10 @@ export class PropiedadService {
 
   editStatus(id: number, estado: 'disponible' | 'alquilada'): Observable<Propiedad> {
     return this.http.patch<Propiedad>(`${API}/status/${id}`, { estado });
+    }
   }
-}
 
-export const PropiedadServiceProvider = {
-  provide: PropiedadService,
-  useClass: PropiedadService
-};
+  export const PropiedadServiceProvider = {
+    provide: PropiedadService,
+    useClass: PropiedadService
+  };
