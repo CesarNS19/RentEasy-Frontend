@@ -1,36 +1,46 @@
-<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-  <div class="col-md-5 col-lg-4">
-    <div class="card bg-white bg-opacity-75 shadow rounded-4 border-0 p-4">
-      <h3 class="text-center mb-4 fw-bold">Crear cuenta</h3>
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Usuario</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white border-end-0"><i class="bi bi-person-fill"></i></span>
-          <input type="text" class="form-control border-start-0" placeholder="Ingresa tu usuario" [(ngModel)]="username">
-        </div>
+<div class="auth-container animate-fade-in">
+  <div class="decor-bg">
+    <i class="bi bi-house-door-fill icon-bg"></i>
+    <i class="bi bi-geo-alt-fill icon-bg"></i>
+    <i class="bi bi-chat icon-bg"></i>
+  </div>
+
+  <div class="auth-card text-center">
+    <h2 class="auth-title">Crear cuenta en RentEasy</h2>
+    <h2 class="auth-subtitle">Regístrate</h2>
+
+    <div class="mt-4">
+      <label class="input-label">Usuario</label>
+      <div class="input-wrapper">
+        <i class="bi bi-person"></i>
+        <input type="text" class="form-control" [(ngModel)]="username" placeholder="Ingresa tu usuario">
       </div>
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Contraseña</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock-fill"></i></span>
-          <input type="password" class="form-control border-start-0" placeholder="Ingresa tu contraseña" [(ngModel)]="password">
-        </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="input-label">Contraseña</label>
+      <div class="input-wrapper">
+        <i class="bi bi-lock"></i>
+        <input type="password" class="form-control" [(ngModel)]="password" placeholder="Ingresa tu contraseña">
       </div>
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Rol</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white border-end-0"><i class="bi bi-people-fill"></i></span>
-          <select class="form-select border-start-0" [(ngModel)]="rol">
-            <option value="INQUILINO">Inquilino</option>
-            <option value="ARRENDADOR">Arrendador</option>
-          </select>
-        </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="input-label">Rol</label>
+      <div class="input-wrapper">
+        <i class="bi bi-people"></i>
+        <select class="form-select" [(ngModel)]="rol">
+          <option value="INQUILINO">Inquilino</option>
+          <option value="ARRENDADOR">Arrendador</option>
+        </select>
       </div>
-      <button class="btn btn-primary w-100 py-2 fw-bold mb-2" (click)="register()">Registrar</button>
-      <div class="mt-3 text-center">
-        <span class="text-muted">¿Ya tienes cuenta? </span>
-        <a (click)="back()" class="text-primary fw-semibold">Iniciar sesión</a>
-      </div>
+    </div>
+
+    <button class="btn auth-btn w-100 mt-4" (click)="register()">Registrar</button>
+
+    <div class="mt-3 text-center small">
+      <span class="text-muted">¿Ya tienes cuenta?</span>
+      <a (click)="back()" class="fw-semibold auth-link"> Iniciar sesión</a>
     </div>
   </div>
 </div>

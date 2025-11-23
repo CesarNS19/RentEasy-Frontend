@@ -61,6 +61,13 @@ import { PushService } from './services/push';
               ><i class="bi bi-chat-dots me-2"></i>Ver chats</a
             >
           </li>
+          <!-- Perfil -->
+           <li class="sidebar-title">Perfil</li>
+          <li>
+            <a routerLink="/profile" (click)="closeSidebar()"
+              ><i class="bi bi-person-circle me-2"></i>Perfil</a
+            >
+          </li>
         </ul>
       </aside>
 

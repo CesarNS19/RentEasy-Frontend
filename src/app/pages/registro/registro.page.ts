@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule],
   templateUrl: './registro.page.html',
+  styleUrls: ['./registro.page.scss'],
 })
 export class RegistroPage {
   username = '';

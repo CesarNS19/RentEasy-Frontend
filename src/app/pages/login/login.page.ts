@@ -11,10 +11,12 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule],
   templateUrl: './login.page.html',
+  styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
   username = '';
   password = '';
+  rememberMe: boolean = false;
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -34,8 +36,16 @@ export class LoginPage {
 
     const data = await this.auth.login(this.username, this.password);
     if (!data) return;
-
-    const rol = (data.role || data.rol)?.toLowerCase();
+    
+    if (this.rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+      localStorage.setItem('savedUser', this.username);
+      localStorage.setItem('savedPass', this.password);
+    } else {
+      localStorage.removeItem('rememberMe');
+      localStorage.removeItem('savedUser');
+      localStorage.removeItem('savedPass');
+    }
 
     Swal.fire({
       toast: true,
@@ -55,6 +65,12 @@ export class LoginPage {
   }
 
   ngOnInit() {
+    if (localStorage.getItem('rememberMe') === 'true') {
+      this.username = localStorage.getItem('savedUser') || '';
+      this.password = localStorage.getItem('savedPass') || '';
+      this.rememberMe = true;
+    }
+
     if (localStorage.getItem('loggedOut')) {
       Swal.fire({
         toast: true,

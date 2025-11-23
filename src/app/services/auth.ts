@@ -34,6 +34,8 @@ export class AuthService {
 
   private checkSessionExpiration() {
     const exp = localStorage.getItem(this.expKey);
+    if (localStorage.getItem('rememberMe') === 'true') return;
+
     if (exp && Date.now() > parseInt(exp, 10)) {
       this.logout();
       Swal.fire({
@@ -50,6 +52,8 @@ export class AuthService {
   }
 
   private startInactivityWatcher() {
+    if (localStorage.getItem('rememberMe') === 'true') return;
+
     this.clearInactivityTimeout();
     this.inactivityTimeout = setTimeout(() => {
       this.logout();
