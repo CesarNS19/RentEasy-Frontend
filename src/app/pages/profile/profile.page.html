@@ -1,13 +1,51 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>profile</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="container mt-4" *ngIf="user">
+  <div class="card mx-auto" style="max-width: 400px;">
+    <img *ngIf="user.imageUrl" [src]="user.imageUrl" class="card-img-top" alt="Imagen de usuario">
+    <div class="card-body text-center">
+      <h5 class="card-title">{{ user.username }}</h5>
+      <button class="btn btn-edit" (click)="openModal()">Editar perfil</button>
+    </div>
+  </div>
+</div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+<!-- Modal de edición -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Editar perfil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form (submit)="save(); $event.preventDefault()">
+          <div class="mb-3">
+            <label for="username" class="form-label">Usuario</label>
+            <input type="text" class="form-control" id="username" [(ngModel)]="username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              id="password" 
+              [(ngModel)]="password" 
+              name="password" 
+              placeholder="********">
+            <div class="form-text">Dejar vacío para mantener la contraseña actual</div>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Imagen de perfil</label>
+            <input type="file" class="form-control" id="image" (change)="onFileChange($event)">
+          </div>
+          <div class="mb-3 text-center" *ngIf="imagePreview">
+            <img [src]="imagePreview" class="img-fluid rounded" style="max-height: 150px;" alt="Preview">
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-save">Guardar cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

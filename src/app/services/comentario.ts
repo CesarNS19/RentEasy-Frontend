@@ -12,6 +12,7 @@ export interface Comentario {
   usuarioId: number;
   username?: string;
   fecha?: string;
+  imageUrl?: string;
 }
 
 @Injectable({

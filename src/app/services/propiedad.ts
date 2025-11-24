@@ -9,6 +9,7 @@
     username: string;
     password?: string;
     role: string;
+    imageUrl?: string;
   }
 
   export interface Propiedad {

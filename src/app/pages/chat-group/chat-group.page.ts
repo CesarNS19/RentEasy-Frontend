@@ -36,12 +36,14 @@ export class ChatGroupPage implements OnInit {
   abrirChat(conv: Conversacion) {
     const receiverId = conv.emisorId === this.userId ? conv.receptorId : conv.emisorId;
     const receiverName = conv.emisorId === this.userId ? conv.receptorName : conv.emisorName;
+    const receiverImageUrl = conv.emisorId === this.userId ? conv.receptorImageUrl : conv.emisorImageUrl;
 
     this.router.navigate(['/chat-details'], {
       queryParams: {
         conversationId: conv.conversationId,
         receiverId,
-        receiverName
+        receiverName,
+        receiverImageUrl
       }
     });
 
@@ -49,6 +51,7 @@ export class ChatGroupPage implements OnInit {
       this.cargarConversaciones();
     });
   }
+
   actualizarConversaciones() {
     this.cargarConversaciones();
   }

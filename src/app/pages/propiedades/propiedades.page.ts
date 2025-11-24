@@ -25,6 +25,7 @@ export class PropiedadesPage implements OnInit {
     estrellas: 5,
     propiedadId: 0,
     usuarioId: 0,
+    imageUrl: ''
   };
 
   comentarios: Comentario[] = [];
@@ -60,7 +61,7 @@ export class PropiedadesPage implements OnInit {
     });
   }
 
-  openChat(propietarioId: number | undefined, propietarioName: string | undefined) {
+  openChat(propietarioId: number | undefined, propietarioName: string | undefined, propietarioImageUrl?: string) {
     if (!propietarioId || !propietarioName) {
       Swal.fire({
         toast: true,
@@ -84,7 +85,7 @@ export class PropiedadesPage implements OnInit {
       });
       return;
     }
-    
+
     if (this.currentUserId === propietarioId) {
       Swal.fire({
         toast: true,
@@ -102,6 +103,7 @@ export class PropiedadesPage implements OnInit {
         senderId: this.currentUserId,
         receiverId: propietarioId,
         receiverName: propietarioName,
+        receiverImageUrl: propietarioImageUrl
       },
     });
   }

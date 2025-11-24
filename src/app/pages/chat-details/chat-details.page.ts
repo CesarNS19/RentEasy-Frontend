@@ -18,6 +18,7 @@ export class ChatDetailsPage implements OnInit, AfterViewChecked {
   messages: Mensaje[] = [];
   message: string = '';
   private shouldScroll = false;
+  receiverImageUrl?: string;
 
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
@@ -35,6 +36,7 @@ export class ChatDetailsPage implements OnInit, AfterViewChecked {
       this.conversationId = params['conversationId'];
       this.receiverId = Number(params['receiverId']);
       this.receiverName = params['receiverName'] || 'Usuario';
+      this.receiverImageUrl = params['receiverImageUrl'];
 
       if (this.conversationId) {
         this.cargarMensajes();

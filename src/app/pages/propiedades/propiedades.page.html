@@ -27,10 +27,16 @@
       <div class="card-body">
         <div class="row mb-1 align-items-center">
           <div class="col-auto d-flex align-items-center">
-            <i class="bi bi-person-circle me-1"></i>
+            <img *ngIf="p.propietario?.imageUrl; else defaultUserIcon" 
+                [src]="p.propietario?.imageUrl" 
+                class="rounded-circle me-1"
+                style="width: 24px; height: 24px; object-fit: cover;">
+            <ng-template #defaultUserIcon>
+              <i class="bi bi-person-circle me-1"></i>
+            </ng-template>
             <span>Publicado por {{ p.propietario?.username || 'Desconocido' }}</span>
           </div>
-          
+    
           <div class="col-auto ms-auto">
             <ng-container *ngIf="(p.promedio ?? 0) > 0; else noRating">
               <span class="rating d-flex align-items-center">
@@ -69,7 +75,7 @@
       <div class="card-footer-propiedad">
         <button *ngIf="p.propietario?.id" 
                 class="btn btn-chat btn-primary" 
-                (click)="openChat(p.propietario?.id, p.propietario?.username)">
+                (click)="openChat(p.propietario?.id, p.propietario?.username, p.propietario?.imageUrl)">
           <i class="bi bi-chat-dots"></i> Chat
         </button>
 
@@ -132,9 +138,15 @@
       <div class="modal-body">
         <div *ngIf="comentarios.length > 0; else noComments">
           <div *ngFor="let c of comentarios" class="mb-3 border-bottom pb-2">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center mb-1">
+              <ng-container *ngIf="c.imageUrl; else defaultIcon">
+                <img [src]="c.imageUrl" class="rounded-circle me-2" style="width:30px; height:30px; object-fit:cover;">
+              </ng-container>
+              <ng-template #defaultIcon>
+                <i class="bi bi-person-circle me-2" style="font-size:1.5rem;"></i>
+              </ng-template>
               <strong>{{ c.username || 'Desconocido' }}</strong>
-              <span>
+              <span class="ms-auto">
                 <i class="bi bi-star-fill text-warning"></i> {{ c.estrellas }}/5
               </span>
             </div>

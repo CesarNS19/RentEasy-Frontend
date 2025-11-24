@@ -25,6 +25,7 @@ export class ChatPage implements OnInit, OnDestroy {
   receiverId!: number;
   receiverName = 'Usuario';
   conversationId!: string;
+  receiverImageUrl?: string;
 
   constructor(
     private chatService: ChatService,
@@ -39,6 +40,7 @@ export class ChatPage implements OnInit, OnDestroy {
       this.userId = this.auth.getUserId()!;
       this.receiverId = Number(params['receiverId']);
       this.receiverName = params['receiverName'] || 'Usuario';
+      this.receiverImageUrl = params['receiverImageUrl'];
 
       if (this.userId === this.receiverId) {
         this.router.navigate(['/propiedades']);
@@ -108,7 +110,7 @@ export class ChatPage implements OnInit, OnDestroy {
     this.ws.disconnect();
   }
 
-   volverAChatGroup() {
+  volverAChatGroup() {
     this.router.navigate(['/propiedades']);
   }
 }

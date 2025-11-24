@@ -4,7 +4,14 @@
       <i class="bi bi-arrow-left"></i>
     </button>
     <div class="user-icon me-2">
-      <i class="bi bi-person-circle"></i>
+      <img *ngIf="receiverImageUrl; else defaultIcon" 
+           [src]="receiverImageUrl" 
+           alt="Usuario" 
+           class="rounded-circle" 
+           style="width: 40px; height: 40px; object-fit: cover;">
+      <ng-template #defaultIcon>
+        <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+      </ng-template>
     </div>
     <div class="user-name">
       {{ receiverName }}

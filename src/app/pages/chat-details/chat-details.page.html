@@ -3,15 +3,24 @@
     <button class="btn btn-link me-2" (click)="volverAChatGroup()">
       <i class="bi bi-arrow-left"></i>
     </button>
+
     <div class="user-icon me-2">
-      <i class="bi bi-person-circle"></i>
+      <img *ngIf="receiverImageUrl; else defaultIcon" 
+           [src]="receiverImageUrl" 
+           alt="Usuario" 
+           class="rounded-circle" 
+           style="width: 40px; height: 40px; object-fit: cover;">
+      <ng-template #defaultIcon>
+        <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+      </ng-template>
     </div>
+
     <div class="user-name">
       {{ receiverName }}
     </div>
   </div>
 
-    <div class="chat-container" #chatContainer>
+  <div class="chat-container" #chatContainer>
     <div *ngFor="let msg of messages"
          class="chat-bubble"
          [ngClass]="{'sent': msg.emisorId === userId, 'received': msg.emisorId !== userId}">
@@ -20,9 +29,9 @@
     </div>
   </div>
 
-    <div class="chat-input-bar d-flex">
-      <input #chatInput type="text" [(ngModel)]="message" placeholder="Escribe un mensaje..."
-            (keyup.enter)="sendMessage()" class="form-control me-2"/>
-      <button class="btn btn-send" (click)="sendMessage()">Enviar</button>
-    </div>
+  <div class="chat-input-bar d-flex">
+    <input #chatInput type="text" [(ngModel)]="message" placeholder="Escribe un mensaje..."
+          (keyup.enter)="sendMessage()" class="form-control me-2"/>
+    <button class="btn btn-send" (click)="sendMessage()">Enviar</button>
+  </div>
 </div>

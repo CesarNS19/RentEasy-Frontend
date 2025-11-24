@@ -19,6 +19,8 @@ export interface Conversacion {
   receptorName: string;
   ultimoMensaje: Mensaje;
   unreadCount?: number;
+  emisorImageUrl?: string;
+  receptorImageUrl?: string;
 }
 
 @Injectable({
