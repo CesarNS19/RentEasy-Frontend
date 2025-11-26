@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const API = 'http://localhost:8081/auth';
+const API = 'http://localhost/services/auth/';
 
 export class AuthService {
   private roleSubject = new BehaviorSubject<string | null>(null);
@@ -35,7 +35,6 @@ export class AuthService {
   private checkSessionExpiration() {
     const exp = localStorage.getItem(this.expKey);
     if (localStorage.getItem('rememberMe') === 'true') return;
-
     if (exp && Date.now() > parseInt(exp, 10)) {
       this.logout();
       Swal.fire({
@@ -53,7 +52,6 @@ export class AuthService {
 
   private startInactivityWatcher() {
     if (localStorage.getItem('rememberMe') === 'true') return;
-
     this.clearInactivityTimeout();
     this.inactivityTimeout = setTimeout(() => {
       this.logout();
@@ -99,20 +97,18 @@ export class AuthService {
     }
 
     try {
-      const res = await axios.post(API + '/login', { username, password });
+      const res = await axios.post(API + 'auth.php', { username, password });
       const data = res.data;
-
       const expireTime = Date.now() + this.inactivityLimit;
 
       localStorage.setItem(this.loginKey, data.token);
-      localStorage.setItem(this.roleKey, data.role || data.rol);
+      localStorage.setItem(this.roleKey, data.role);
       localStorage.setItem(this.userKey, data.username);
       localStorage.setItem(this.userIdKey, data.id.toString());
       localStorage.setItem(this.expKey, expireTime.toString());
 
       this.userSubject.next(data.username);
-      this.roleSubject.next(data.role?.toLowerCase() || data.rol?.toLowerCase());
-
+      this.roleSubject.next(data.role.toLowerCase());
       this.startInactivityWatcher();
 
       Swal.fire({
@@ -126,7 +122,7 @@ export class AuthService {
       });
 
       return data;
-    } catch (e) {
+    } catch {
       Swal.fire({
         toast: true,
         icon: 'error',
@@ -168,7 +164,7 @@ export class AuthService {
     }
 
     try {
-      const res = await axios.post(API + '/registro', { username, password, role });
+      const res = await axios.post(API + 'register.php', { username, password, role });
       Swal.fire({
         toast: true,
         icon: 'success',
@@ -180,7 +176,7 @@ export class AuthService {
         timerProgressBar: true,
       });
       return res.data;
-    } catch (e) {
+    } catch {
       Swal.fire({
         toast: true,
         icon: 'error',
@@ -204,7 +200,6 @@ export class AuthService {
     this.roleSubject.next(null);
     this.userSubject.next(null);
     this.clearInactivityTimeout();
-
     window.location.href = '/login';
   }
 

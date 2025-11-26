@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { AuthService } from './services/auth';
-import { PushService } from './services/push';
 
 @Component({
   selector: 'app-root',
@@ -266,8 +265,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: AuthService,
-    private cd: ChangeDetectorRef,
-    private pushService: PushService
+    private cd: ChangeDetectorRef
   ) {}
 
  ngOnInit() {
@@ -295,9 +293,6 @@ export class AppComponent implements OnInit {
       this.showLayout = !hiddenRoutes.includes(url);
       this.isSidebarOpen = false;
     });
-
-    this.pushService.requestPermission();
-    this.pushService.listenMessages();
   }
 
 

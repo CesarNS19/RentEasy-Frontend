@@ -40,7 +40,7 @@
               <ng-template #defaultUserIcon>
                 <i class="bi bi-person-circle me-1"></i>
               </ng-template>
-              <span>Publicado por {{ p.propietario?.username || 'Desconocido' }}</span>
+              <span>{{ p.propietario?.username || 'Desconocido' }}</span>
             </div>
 
             <div class="col-auto ms-auto">
@@ -61,6 +61,9 @@
               <i class="bi bi-house-door me-1 text-success"></i> {{ p.titulo }}
             </div>
             <div class="col-auto ms-auto">
+              <span class="badge bg-warning text-dark">{{ p.tipo }}</span>
+            </div>
+            <div class="col-auto ms-auto">
               <i class="bi"
                  [ngClass]="p.estado === 'disponible' ? 'bi-door-open text-success' : 'bi-key text-danger'"
                  class="me-1"></i>
@@ -68,19 +71,18 @@
             </div>
           </div>
 
-          <p><i class="bi bi-geo-alt-fill text-danger me-1 mt-2"></i> {{ p.ubicacion }}</p>
-
           <div class="row mb-1">
-            <div class="col-6">
+            <div class="col-12">
               <i class="bi bi-card-text me-1 text-secondary"></i>
               <p class="text-muted small mb-1 d-inline">{{ p.descripcion }}</p>
             </div>
-            <div class="col-6">
-              <i class="bi bi-tag text-warning me-1"></i>{{ p.tipo }}
-            </div>
-            <div class="col-6">
-              <h6 class="precio mb-0">{{ p.precio | currency:'MXN':'symbol':'1.0-0' }}</h6>
-            </div>
+          </div>
+
+          <p><i class="bi bi-geo-alt-fill text-danger me-1 mt-2"></i> {{ p.ubicacion }}</p>
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="precio">{{ p.precio | currency:'MXN':'symbol':'1.0-0' }}</span>
+            <span><i class="bi bi-telephone me-1"></i>{{ p.propietario?.telefono || 'Desconocido' }}</span>
           </div>
 
           <div class="card-footer-propiedad mt-2 d-flex flex-wrap gap-2">

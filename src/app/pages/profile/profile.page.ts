@@ -15,6 +15,7 @@ export class ProfilePage implements OnInit {
   user: any;
   username: string = '';
   password: string = '';
+  telefono : string = '';
   imageFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   modalInstance: any;
@@ -23,11 +24,8 @@ export class ProfilePage implements OnInit {
 
   ngOnInit(): void {
     this.loadUser();
-
     const modalEl = document.getElementById('editProfileModal');
-    if (modalEl) {
-      this.modalInstance = new bootstrap.Modal(modalEl);
-    }
+    if (modalEl) this.modalInstance = new bootstrap.Modal(modalEl);
   }
 
   async loadUser() {
@@ -35,31 +33,22 @@ export class ProfilePage implements OnInit {
       const userId = this.auth.getUserId();
       if (!userId) return;
 
-      const res = await fetch(`http://localhost:8081/users/${userId}`, {
-        headers: { 'Authorization': `Bearer ${this.auth.getToken()}` }
-      });
-
+      const res = await fetch(`http://localhost/services/profile/update.php?id=${userId}`, { method: 'GET' });
       if (!res.ok) throw new Error('No se pudo cargar el usuario');
 
       const data = await res.json();
-
       this.user = {
-        username: data.username,
-        imageUrl: data.imageUrl || null
+        username: data.data.username,
+        telefono : data.data.telefono || null,
+        imageUrl: data.data.image_url || null
       };
 
       this.username = this.user.username;
+      this.telefono = this.user.telefono;
       this.imagePreview = this.user.imageUrl;
 
     } catch (err: any) {
-      Swal.fire({
-        toast: true,
-        icon: 'error',
-        title: err.message,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2500
-      });
+      Swal.fire({ toast: true, icon: 'error', title: err.message, position: 'top-end', showConfirmButton: false, timer: 2500 });
     }
   }
 
@@ -69,14 +58,10 @@ export class ProfilePage implements OnInit {
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
-
     if (input.files && input.files.length > 0) {
       this.imageFile = input.files[0];
-
       const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result;
-      };
+      reader.onload = () => this.imagePreview = reader.result;
       reader.readAsDataURL(this.imageFile);
     } else {
       this.imageFile = null;
@@ -85,58 +70,35 @@ export class ProfilePage implements OnInit {
   }
 
   async save() {
-  const formData = new FormData();
-  formData.append('username', this.username);
+    const formData = new FormData();
+    formData.append('username', this.username);
+    formData.append('telefono', this.telefono);
+    if (this.password.trim()) formData.append('password', this.password.trim());
+    if (this.imageFile) formData.append('image', this.imageFile);
 
-  // Solo enviar password si se escribió algo nuevo
-  if (this.password.trim()) {
-    formData.append('password', this.password.trim());
-  }
+    try {
+      const res = await fetch(`http://localhost/services/profile/update.php?id=${this.auth.getUserId()}`, {
+        method: 'POST',
+        body: formData
+      });
 
-  if (this.imageFile) {
-    formData.append('image', this.imageFile);
-  }
+      if (!res.ok) throw new Error('Error al actualizar usuario');
 
-  try {
-    const res = await fetch(`http://localhost:8081/users/${this.auth.getUserId()}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${this.auth.getToken()}`
-      },
-      body: formData
-    });
+      const data = await res.json();
+      if (!data.success) throw new Error('No se pudo actualizar usuario');
 
-    if (!res.ok) throw new Error('Error al actualizar usuario');
+      Swal.fire({ toast: true, icon: 'success', title: 'Perfil actualizado', position: 'top-end', timer: 2000, showConfirmButton: false });
 
-    Swal.fire({
-      toast: true,
-      icon: 'success',
-      title: 'Perfil actualizado',
-      position: 'top-end',
-      timer: 2000,
-      showConfirmButton: false
-    });
+      localStorage.setItem('renteasy_user', this.username);
+      if (this.imageFile && this.imagePreview) localStorage.setItem('userImage', this.imagePreview as string);
 
-    localStorage.setItem('renteasy_user', this.username);
-    if (this.imageFile && this.imagePreview) {
-      localStorage.setItem('userImage', this.imagePreview as string);
+      this.loadUser();
+      this.modalInstance?.hide();
+      this.password = '';
+      this.imageFile = null;
+
+    } catch (e: any) {
+      Swal.fire({ toast: true, icon: 'error', title: e.message, position: 'top-end', timer: 2500, showConfirmButton: false });
     }
-
-    this.loadUser();
-    this.modalInstance?.hide();
-    this.password = '';
-    this.imageFile = null;
-
-  } catch (e: any) {
-    Swal.fire({
-      toast: true,
-      icon: 'error',
-      title: e.message,
-      position: 'top-end',
-      timer: 2500,
-      showConfirmButton: false
-    });
   }
-}
-
 }

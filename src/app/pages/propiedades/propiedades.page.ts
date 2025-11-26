@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Propiedad, PropiedadService } from 'src/app/services/propiedad';
 import { AuthService } from 'src/app/services/auth';
-import { ComentarioService, Comentario } from 'src/app/services/comentario';
+import { ComentarioService, Comentario, Calificacion } from 'src/app/services/comentario';
 import Swal from 'sweetalert2';
 import { CommonModule, NgFor, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +22,6 @@ export class PropiedadesPage implements OnInit {
   propiedadSeleccionadaId: number | null = null;
   nuevoComentario: Comentario = {
     mensaje: '',
-    estrellas: 5,
     propiedadId: 0,
     usuarioId: 0,
     imageUrl: ''
@@ -30,6 +29,9 @@ export class PropiedadesPage implements OnInit {
 
   comentarios: Comentario[] = [];
   comentarioPropiedadId: number | null = null;
+
+  estrellasSeleccionadas = 0;
+  calificadoPropiedades: number[] = [];
 
   constructor(
     private propiedadService: PropiedadService,
@@ -46,7 +48,7 @@ export class PropiedadesPage implements OnInit {
 
   cargarPropiedades() {
     this.propiedadService.listar().subscribe({
-      next: (res) => (this.propiedades = res),
+      next: (res) => this.propiedades = res,
       error: (err) => {
         console.error(err);
         Swal.fire({
@@ -57,7 +59,7 @@ export class PropiedadesPage implements OnInit {
           showConfirmButton: false,
           timer: 2500,
         });
-      },
+      }
     });
   }
 
@@ -108,16 +110,34 @@ export class PropiedadesPage implements OnInit {
     });
   }
 
-  openComentarios(propiedadId: number) {
-    this.propiedadSeleccionadaId = propiedadId;
+  verOpiniones(propiedadId: number) {
+    this.comentarioPropiedadId = propiedadId;
     this.nuevoComentario = {
       mensaje: '',
-      estrellas: 5,
       propiedadId: propiedadId,
-      usuarioId: this.currentUserId || 0,
+      usuarioId: this.currentUserId || 0
     };
-    const modal = new (window as any).bootstrap.Modal(document.getElementById('comentarioModal'));
-    modal.show();
+
+    this.comentarioService.listarPorPropiedad(propiedadId).subscribe({
+      next: (res) => {
+        this.comentarios = res;
+        const modal = new (window as any).bootstrap.Modal(
+          document.getElementById('modalOpiniones')
+        );
+        modal.show();
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire({
+          toast: true,
+          icon: 'error',
+          title: 'No se pudieron cargar las opiniones',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2500
+        });
+      }
+    });
   }
 
   guardarComentario() {
@@ -144,10 +164,10 @@ export class PropiedadesPage implements OnInit {
           timer: 2500,
         });
         const modal = (window as any).bootstrap.Modal.getInstance(
-          document.getElementById('comentarioModal')
+          document.getElementById('modalOpiniones')
         );
         modal.hide();
-        this.cargarPropiedades();
+        this.verOpiniones(this.nuevoComentario.propiedadId);
       },
       error: () => {
         Swal.fire({
@@ -158,32 +178,70 @@ export class PropiedadesPage implements OnInit {
           showConfirmButton: false,
           timer: 2500,
         });
-      },
+      }
     });
   }
 
-  verOpiniones(propiedadId: number) {
-    this.comentarioPropiedadId = propiedadId;
-    this.comentarioService.listarPorPropiedad(propiedadId)
-      .subscribe({
-        next: (res) => {
-          this.comentarios = res;
-          const modal = new (window as any).bootstrap.Modal(
-            document.getElementById('modalOpiniones')
-          );
-          modal.show();
-        },
-        error: (err) => {
-          console.error(err);
-          Swal.fire({
-            toast: true,
-            icon: 'error',
-            title: 'No se pudieron cargar las opiniones',
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2500
-          });
-        }
+  openCalificar(propiedadId: number) {
+    if (this.calificadoPropiedades.includes(propiedadId)) return;
+    this.propiedadSeleccionadaId = propiedadId;
+    this.estrellasSeleccionadas = 0;
+
+    const modal = new (window as any).bootstrap.Modal(document.getElementById('modalCalificar'));
+    modal.show();
+  }
+
+  seleccionarEstrellas(valor: number) {
+    this.estrellasSeleccionadas = valor;
+  }
+
+  enviarCalificacion() {
+    if (!this.propiedadSeleccionadaId || !this.currentUserId || this.estrellasSeleccionadas === 0) {
+      Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: 'Selecciona una propiedad y cuántas estrellas',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500
       });
+      return;
+    }
+
+    const cal: Calificacion & { usuario_id: number; propiedad_id: number } = {
+      estrellas: this.estrellasSeleccionadas,
+      usuario_id: this.currentUserId,
+      propiedad_id: this.propiedadSeleccionadaId
+    };
+
+    this.comentarioService.calificar(this.propiedadSeleccionadaId, cal).subscribe({
+      next: () => {
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          title: 'Gracias por calificar',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2500
+        });
+        this.calificadoPropiedades.push(this.propiedadSeleccionadaId!);
+        const modal = (window as any).bootstrap.Modal.getInstance(
+          document.getElementById('modalCalificar')
+        );
+        modal.hide();
+        this.cargarPropiedades();
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire({
+          toast: true,
+          icon: 'error',
+          title: 'No se pudo enviar la calificación',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2500
+        });
+      }
+    });
   }
 }

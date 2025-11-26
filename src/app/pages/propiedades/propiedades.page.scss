@@ -2,6 +2,9 @@
   border-radius: 1rem;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card-propiedad:hover {
@@ -14,6 +17,13 @@
   border-top-right-radius: 1rem;
   height: 150px;
   object-fit: contain;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .card-body h5 {
@@ -33,12 +43,13 @@
 }
 
 .card-footer-propiedad {
+  margin-top: auto;
   background-color: #f9f9f9;
   border-top: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
 }
 
 .card-footer-propiedad .btn {
@@ -104,6 +115,9 @@
   border-radius: 1rem;
   overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .modal-header {
@@ -149,6 +163,46 @@
   padding: 0 15px;
 }
 
-.txt-propiedades{
-  color : #004d40;
+.txt-propiedades {
+  color: #004d40;
+}
+
+#modalOpiniones .modal-dialog {
+  max-height: 50vh;
+  margin: 0 auto;
+}
+
+#modalOpiniones .modal-body {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+#modalOpiniones .modal-footer-comentario {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+#modalOpiniones .modal-footer-comentario .d-flex {
+  width: 100%;
+  gap: 0.5rem;
+}
+
+#modalOpiniones .modal-footer-comentario input.form-control {
+  flex: 1;
+  height: 40px;
+}
+
+#modalOpiniones .modal-footer-comentario .btn {
+  height: 40px;
+  padding: 0 12px;
+}
+
+.btn-send{
+  background-color: #009688;
+  color: white;
 }
