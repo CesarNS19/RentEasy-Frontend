@@ -33,7 +33,7 @@ export class ProfilePage implements OnInit {
       const userId = this.auth.getUserId();
       if (!userId) return;
 
-      const res = await fetch(`http://localhost/services/profile/update.php?id=${userId}`, { method: 'GET' });
+      const res = await fetch(`https://renteasy.space/profile/update.php?id=${userId}`, { method: 'GET' });
       if (!res.ok) throw new Error('No se pudo cargar el usuario');
 
       const data = await res.json();
@@ -77,7 +77,7 @@ export class ProfilePage implements OnInit {
     if (this.imageFile) formData.append('image', this.imageFile);
 
     try {
-      const res = await fetch(`http://localhost/services/profile/update.php?id=${this.auth.getUserId()}`, {
+      const res = await fetch(`https://renteasy.space/profile/update.php?id=${this.auth.getUserId()}`, {
         method: 'POST',
         body: formData
       });

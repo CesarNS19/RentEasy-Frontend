@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const API = 'http://localhost/services/auth/';
+const API = 'https://renteasy.space/auth/';
 
 export class AuthService {
   private roleSubject = new BehaviorSubject<string | null>(null);

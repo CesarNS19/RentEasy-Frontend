@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const API = 'http://localhost/services/comments';
+const API = 'https://renteasy.space/comments';
 
 export interface Comentario {
   id?: number;

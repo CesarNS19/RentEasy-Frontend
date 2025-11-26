@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const API = 'http://localhost/services/property';
+const API = 'https://renteasy.space/property';
 
 export interface Propietario {
   id: number;
