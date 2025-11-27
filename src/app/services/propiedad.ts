@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth';
 
 const API = 'https://renteasy.space/property';
 
@@ -25,17 +26,20 @@ export interface Propiedad {
   estado?: 'disponible' | 'alquilada' | string;
   propietario?: Propietario;
   promedio?: number;
-  rating?: number;
+  calificado?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class PropiedadService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   listar(): Observable<Propiedad[]> {
-    return this.http.get<Propiedad[]>(`${API}/list.php`);
+    const userId = this.auth.getUserId() || 0;
+    return this.http.get<Propiedad[]>(`${API}/list.php`, {
+      params: { userId: userId.toString() }
+    });
   }
 
   listarById(propietarioId: number): Observable<Propiedad[]> {

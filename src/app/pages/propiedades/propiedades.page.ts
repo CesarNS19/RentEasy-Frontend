@@ -50,7 +50,12 @@ export class PropiedadesPage implements OnInit {
 
   cargarPropiedades() {
     this.propiedadService.listar().subscribe({
-      next: (res) => this.propiedades = res,
+      next: (res: any[]) => {
+        this.propiedades = res;
+        this.calificadoPropiedades = res
+          .filter(p => p.calificado)
+          .map(p => p.id);
+      },
       error: () => {
         Swal.fire({
           toast: true,

@@ -63,12 +63,11 @@ export class PropiedadFormPage implements OnInit {
   }
 
   obtenerSugerencias(texto: string) {
-    this.http.get<any[]>(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&addressdetails=1&limit=5&countrycodes=mx`
-    ).subscribe({
-      next: data => this.sugerencias = data,
-      error: () => this.showToast('warning', 'Error al buscar direcciones')
-    });
+    this.http.get<any[]>(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&addressdetails=1&limit=5&countrycodes=mx`)
+      .subscribe({
+        next: data => this.sugerencias = data,
+        error: () => this.showToast('warning', 'Error al buscar direcciones')
+      });
   }
 
   seleccionarDireccion(nombre: string) {
@@ -102,13 +101,8 @@ export class PropiedadFormPage implements OnInit {
 
   guardarPropiedad(event: Event) {
     event.preventDefault();
-    if (
-      !this.propiedad.titulo.trim() ||
-      !this.propiedad.descripcion.trim() ||
-      !this.propiedad.tipo.trim() ||
-      !this.propiedad.ubicacion.trim() ||
-      !this.propiedad.precio || this.propiedad.precio <= 0
-    ) {
+
+    if (!this.propiedad.titulo.trim() || !this.propiedad.descripcion.trim() || !this.propiedad.tipo.trim() || !this.propiedad.ubicacion.trim() || !this.propiedad.precio || this.propiedad.precio <= 0) {
       this.showToast('warning', 'Completa todos los campos antes de guardar');
       return;
     }
@@ -125,9 +119,12 @@ export class PropiedadFormPage implements OnInit {
     }
 
     this.cargando = true;
+    const subirNuevas = this.selectedFiles.length > 0
+      ? this.propiedadService.guardarImagenes(this.propiedad.id!, this.selectedFiles).toPromise()
+      : Promise.resolve({ imagenes: [] });
 
-    const guardarDatos = (imagenesUrls?: string[]) => {
-      const todasImagenes = [...this.existingImages, ...(imagenesUrls || [])];
+    subirNuevas.then((res: any) => {
+      const todasImagenes = [...this.existingImages, ...(res.imagenes || [])];
 
       const payload: any = {
         titulo: this.propiedad.titulo,
@@ -147,31 +144,13 @@ export class PropiedadFormPage implements OnInit {
         : this.propiedadService.crear(payload);
 
       request$.subscribe({
-        next: (res: any) => {
-          if (!this.propiedad.id && this.selectedFiles.length > 0) {
-            this.propiedadService.guardarImagenes(res.id, this.selectedFiles).subscribe({
-              next: () => this.finalizarGuardado(),
-              error: () => this.errorImagenes()
-            });
-          } else {
-            this.finalizarGuardado();
-          }
-        },
+        next: () => this.finalizarGuardado(),
         error: () => {
           this.showToast('error', 'Error al guardar la propiedad');
           this.cargando = false;
         }
       });
-    };
-
-    if (this.propiedad.id && this.selectedFiles.length > 0) {
-      this.propiedadService.guardarImagenes(this.propiedad.id, this.selectedFiles).subscribe({
-        next: (res: any) => guardarDatos(res.imagenes),
-        error: () => this.errorImagenes()
-      });
-    } else {
-      guardarDatos();
-    }
+    }).catch(() => this.errorImagenes());
   }
 
   finalizarGuardado() {
@@ -220,15 +199,15 @@ export class PropiedadFormPage implements OnInit {
       next: (p) => {
         this.propiedad = {
           ...p,
-          imagenes: p.imagenes || [],
+          imagenes: p.imagenes ?? [],
           propietario: p.propietario || { id: this.auth.getUserId() || 1, username: '', role: '' },
           estado: p.estado || 'disponible'
         };
 
-        this.existingImages = [...this.propiedad.imagenes!];
-        this.previewUrls = [...this.existingImages];
-        this.selectedFiles = [];
+        this.existingImages = (p.imagenes ?? []).map(url => url.replace('https://renteasy.space/', ''));
+        this.previewUrls = (p.imagenes ?? []).map(url => url);
 
+        this.selectedFiles = [];
         new bootstrap.Modal(document.getElementById('modalPropiedad')!).show();
       },
       error: () => this.showToast('error', 'No se pudo cargar la propiedad')
@@ -261,7 +240,6 @@ export class PropiedadFormPage implements OnInit {
     this.propiedadService.editStatus(prop.id!, estado).subscribe({
       next: res => {
         prop.estado = res.estado;
-
         this.showToast('success', `Estado actualizado a ${estado}`);
         this.cargarPropiedades();
       },

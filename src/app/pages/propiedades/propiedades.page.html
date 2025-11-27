@@ -43,7 +43,7 @@
               <ng-container *ngIf="(p.promedio ?? 0) > 0; else noRating">
                 <span class="rating d-flex align-items-center">
                   <i class="bi bi-star-fill me-1"></i>
-                  {{ p.promedio | number:'1.1-1' }} / 5
+                  {{ p.promedio | number:'1.2-2' }} / 5
                 </span>
               </ng-container>
               <ng-template #noRating>
@@ -88,7 +88,9 @@
               <button class="btn btn-ver" (click)="verOpiniones(p.id)">
                 <i class="bi bi-chat-left-text me-1"></i> Comentarios
               </button>
-              <button *ngIf="!calificadoPropiedades.includes(p.id)" class="btn btn-opinar" (click)="openCalificar(p.id)">
+              <button *ngIf="!calificadoPropiedades.includes(p.id) && !p.calificado" 
+                      class="btn btn-opinar" 
+                      (click)="openCalificar(p.id)">
                 <i class="bi bi-star"></i> Calificar
               </button>
           </div>

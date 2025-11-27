@@ -47,7 +47,7 @@
               <ng-container *ngIf="(p.promedio ?? 0) > 0; else noRating">
                 <span class="rating d-flex align-items-center">
                   <i class="bi bi-star-fill me-1"></i>
-                  {{ p.promedio | number:'1.1-1' }} / 5
+                  {{ p.promedio | number:'1.2-2' }} / 5
                 </span>
               </ng-container>
               <ng-template #noRating>
@@ -151,8 +151,11 @@
           <div class="text-center mt-2" *ngIf="previewUrls.length > 0">
             <div class="d-flex flex-wrap justify-content-center">
               <div *ngFor="let img of previewUrls; let i = index" class="position-relative m-1">
-                <img [src]="img" class="img-fluid rounded" style="max-height:80px; max-width:80px;">
-                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                <img [src]="img"
+                    class="rounded"
+                    style="width:60px; height:60px; object-fit:cover; border:1px solid #dee2e6;">
+                <button type="button"
+                        class="btn btn-sm btn-danger position-absolute top-0 end-0"
                         style="padding: 0 4px; line-height: 1;"
                         (click)="eliminarImagen(i)">
                   <i class="bi bi-x-circle"></i>
@@ -160,7 +163,6 @@
               </div>
             </div>
           </div>
-
           <div class="text-end mt-3">
             <button type="button" class="btn btn-secondary btn-cl me-2" data-bs-dismiss="modal">
               <i class="bi bi-x-circle"></i> Cancelar

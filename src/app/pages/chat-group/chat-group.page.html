@@ -5,33 +5,34 @@
   </div>
 
   <div class="list-group" *ngIf="conversaciones && conversaciones.length > 0">
-    <button *ngFor="let conv of conversaciones"
-            class="list-group-item list-group-item-action chat-item d-flex align-items-center justify-content-between"
-            (click)="abrirChat(conv)">
-      <div class="d-flex align-items-center">
-        <div class="user-icon d-flex align-items-center justify-content-center">
-          <ng-container *ngIf="conv.userId1 === userId ? conv.userImage2 : conv.userImage1; else defaultIcon">
-            <img 
-              [src]="conv.userId1 === userId ? conv.userImage2 : conv.userImage1" 
-              class="rounded-circle" 
-              style="width:40px; height:40px; object-fit:cover;">
-          </ng-container>
-          <ng-template #defaultIcon>
-            <i class="bi bi-person" style="font-size:1.5rem;"></i>
-          </ng-template>
-        </div>
-        <div class="chat-info ms-2">
-          <div class="chat-name">{{ conv.userId1 === userId ? conv.userName2 : conv.userName1 }}</div>
-          <div class="chat-last-message text-truncate">{{ conv.ultimoMensaje.contenido }}</div>
-        </div>
+      <button *ngFor="let conv of conversaciones"
+          class="list-group-item list-group-item-action chat-item d-flex align-items-center justify-content-between"
+          (click)="abrirChat(conv)">
+    <div class="d-flex align-items-center">
+      <div class="user-icon d-flex align-items-center justify-content-center">
+        <ng-container *ngIf="conv.userId1 === userId ? conv.userImage2 : conv.userImage1; else defaultIcon">
+          <img [src]="conv.userId1 === userId ? conv.userImage2 : conv.userImage1" 
+              class="rounded-circle" style="width:40px; height:40px; object-fit:cover;">
+        </ng-container>
+        <ng-template #defaultIcon>
+          <i class="bi bi-person" style="font-size:1.5rem;"></i>
+        </ng-template>
       </div>
-      <div class="chat-meta text-end">
-        <small class="chat-time text-muted">{{ conv.ultimoMensaje.fecha | date:'shortTime' }}</small>
-        <span *ngIf="conv.unreadCount && conv.unreadCount > 0" class="badge bg-success ms-2">
-          {{ conv.unreadCount }}
-        </span>
+      <div class="chat-info ms-2">
+        <div class="chat-name">{{ conv.userId1 === userId ? conv.userName2 : conv.userName1 }}</div>
+        <div class="chat-last-message text-truncate">{{ conv.ultimoMensaje.contenido }}</div>
       </div>
-    </button>
-  </div>
+    </div>
 
+    <div class="chat-meta text-end d-flex align-items-center">
+      <small class="chat-time text-muted">{{ conv.ultimoMensaje.fecha | date:'shortTime' }}</small>
+      <span *ngIf="conv.unreadCount && conv.unreadCount > 0" class="badge bg-success ms-2">
+        {{ conv.unreadCount }}
+      </span>
+      <button type="button" class="btn btn-sm btn-link ms-2" (click)="abrirActionSheet(conv, $event)">
+        <i class="bi bi-trash btn-del"></i>
+      </button>
+    </div>
+  </button>
+  </div>
 </div>

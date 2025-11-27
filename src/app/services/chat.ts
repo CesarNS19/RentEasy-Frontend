@@ -20,6 +20,8 @@ export interface Conversacion {
   userImage2?: string;
   ultimoMensaje: Mensaje;
   unreadCount?: number;
+  showDelete?: boolean; 
+
 }
 
 @Injectable({
@@ -60,5 +62,9 @@ export class ChatService {
 
   deleteMessage(id: number, userId: number, forAll: boolean = false): Observable<any> {
     return this.http.post(`${this.API}/delete_message.php`, { id, userId, forAll });
+  }
+
+  deleteChat(userId: number, otherUserId: number): Observable<any> {
+    return this.http.post(`${this.API}/delete_chat.php`, { userId, otherUserId });
   }
 }
