@@ -77,9 +77,14 @@
 
           <div class="card-footer-propiedad mt-2 d-flex flex-wrap gap-2">
             <button *ngIf="p.propietario?.id" class="btn btn-chat btn-primary" 
-                  (click)="openChat(p.propietario?.id, p.propietario?.username, p.propietario?.imageUrl)">
-                <i class="bi bi-chat-dots"></i> Chat
-              </button>
+                    (click)="openChat({ 
+                        id: p.propietario?.id!, 
+                        username: p.propietario?.username!, 
+                        imageUrl: p.propietario?.imageUrl 
+                    })">
+              <i class="bi bi-chat-dots"></i> Chat
+            </button>
+
               <button class="btn btn-ver" (click)="verOpiniones(p.id)">
                 <i class="bi bi-chat-left-text me-1"></i> Comentarios
               </button>
@@ -127,7 +132,7 @@
           <input type="text" class="form-control me-2" placeholder="Escribe un comentario..."
                  [(ngModel)]="nuevoComentario.mensaje">
           <button type="button" class="btn btn-send" (click)="guardarComentario()">
-            Enviar
+            <i class="bi bi-send-fill"></i>
           </button>
         </div>
       </div>

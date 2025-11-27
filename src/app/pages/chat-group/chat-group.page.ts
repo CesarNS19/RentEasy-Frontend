@@ -27,27 +27,28 @@ export class ChatGroupPage implements OnInit {
 
   cargarConversaciones() {
     this.chatService.listarConversaciones(this.userId).subscribe(res => {
-      this.conversaciones = res.sort((a, b) =>
-        new Date(b.ultimoMensaje.fecha).getTime() - new Date(a.ultimoMensaje.fecha).getTime()
-      );
+      this.conversaciones = res
+        .map(conv => ({
+          ...conv,
+          userImage1: conv.userImage1 || 'assets/default-user.png',
+          userImage2: conv.userImage2 || 'assets/default-user.png'
+        }))
+        .sort((a, b) =>
+          new Date(b.ultimoMensaje.fecha!).getTime() - new Date(a.ultimoMensaje.fecha!).getTime()
+        );
     });
   }
 
   abrirChat(conv: Conversacion) {
-    const receiverId = conv.emisorId === this.userId ? conv.receptorId : conv.emisorId;
-    const receiverName = conv.emisorId === this.userId ? conv.receptorName : conv.emisorName;
-    const receiverImageUrl = conv.emisorId === this.userId ? conv.receptorImageUrl : conv.emisorImageUrl;
+    const receiverId = conv.userId1 === this.userId ? conv.userId2 : conv.userId1;
+    const receiverName = conv.userId1 === this.userId ? conv.userName2 : conv.userName1;
+    const receiverImageUrl = conv.userId1 === this.userId ? conv.userImage2 : conv.userImage1;
 
     this.router.navigate(['/chat-details'], {
-      queryParams: {
-        conversationId: conv.conversationId,
-        receiverId,
-        receiverName,
-        receiverImageUrl
-      }
+      queryParams: { receiverId, receiverName, receiverImageUrl }
     });
 
-    this.chatService.marcarComoLeidos(conv.conversationId, this.userId).subscribe(() => {
+    this.chatService.marcarComoLeidos(this.userId, receiverId).subscribe(() => {
       this.cargarConversaciones();
     });
   }

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Propiedad, PropiedadService } from 'src/app/services/propiedad';
 import { AuthService } from 'src/app/services/auth';
 import { ComentarioService, Comentario, Calificacion } from 'src/app/services/comentario';
+import { ChatService } from 'src/app/services/chat';
 import Swal from 'sweetalert2';
 import { CommonModule, NgFor, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -38,6 +39,7 @@ export class PropiedadesPage implements OnInit {
     private router: Router,
     private auth: AuthService,
     private comentarioService: ComentarioService,
+    private chatService: ChatService,
     private http: HttpClient
   ) {}
 
@@ -49,8 +51,7 @@ export class PropiedadesPage implements OnInit {
   cargarPropiedades() {
     this.propiedadService.listar().subscribe({
       next: (res) => this.propiedades = res,
-      error: (err) => {
-        console.error(err);
+      error: () => {
         Swal.fire({
           toast: true,
           icon: 'error',
@@ -63,8 +64,8 @@ export class PropiedadesPage implements OnInit {
     });
   }
 
-  openChat(propietarioId: number | undefined, propietarioName: string | undefined, propietarioImageUrl?: string) {
-    if (!propietarioId || !propietarioName) {
+  async openChat(propietario: { id: number; username: string; imageUrl?: string }) {
+    if (!propietario?.id || !propietario.username) {
       Swal.fire({
         toast: true,
         icon: 'warning',
@@ -76,7 +77,8 @@ export class PropiedadesPage implements OnInit {
       return;
     }
 
-    if (!this.currentUserId) {
+    const currentUserId = this.auth.getUserId();
+    if (!currentUserId) {
       Swal.fire({
         toast: true,
         icon: 'warning',
@@ -88,11 +90,11 @@ export class PropiedadesPage implements OnInit {
       return;
     }
 
-    if (this.currentUserId === propietarioId) {
+    if (currentUserId === propietario.id) {
       Swal.fire({
         toast: true,
         icon: 'warning',
-        title: 'No puedes iniciar un chat con tus propiedades',
+        title: 'No puedes iniciar un chat con tus propias propiedades',
         position: 'top-end',
         showConfirmButton: false,
         timer: 2500,
@@ -100,13 +102,26 @@ export class PropiedadesPage implements OnInit {
       return;
     }
 
-    this.router.navigate(['/chat'], {
-      queryParams: {
-        senderId: this.currentUserId,
-        receiverId: propietarioId,
-        receiverName: propietarioName,
-        receiverImageUrl: propietarioImageUrl
+    this.chatService.marcarComoLeidos(currentUserId, propietario.id).subscribe({
+      next: () => {
+        this.router.navigate(['/chat'], {
+          queryParams: {
+            receiverId: propietario.id,
+            receiverName: propietario.username,
+            receiverImageUrl: propietario.imageUrl
+          },
+        });
       },
+      error: () => {
+        Swal.fire({
+          toast: true,
+          icon: 'error',
+          title: 'No se pudieron marcar los mensajes como leídos',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2500,
+        });
+      }
     });
   }
 
@@ -126,8 +141,7 @@ export class PropiedadesPage implements OnInit {
         );
         modal.show();
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         Swal.fire({
           toast: true,
           icon: 'error',
@@ -231,8 +245,7 @@ export class PropiedadesPage implements OnInit {
         modal.hide();
         this.cargarPropiedades();
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         Swal.fire({
           toast: true,
           icon: 'error',

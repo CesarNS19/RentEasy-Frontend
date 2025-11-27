@@ -9,10 +9,10 @@
             class="list-group-item list-group-item-action chat-item d-flex align-items-center justify-content-between"
             (click)="abrirChat(conv)">
       <div class="d-flex align-items-center">
-       <div class="user-icon d-flex align-items-center justify-content-center">
-          <ng-container *ngIf="conv.emisorId === userId ? conv.receptorImageUrl : conv.emisorImageUrl; else defaultIcon">
+        <div class="user-icon d-flex align-items-center justify-content-center">
+          <ng-container *ngIf="conv.userId1 === userId ? conv.userImage2 : conv.userImage1; else defaultIcon">
             <img 
-              [src]="conv.emisorId === userId ? conv.receptorImageUrl : conv.emisorImageUrl" 
+              [src]="conv.userId1 === userId ? conv.userImage2 : conv.userImage1" 
               class="rounded-circle" 
               style="width:40px; height:40px; object-fit:cover;">
           </ng-container>
@@ -21,7 +21,7 @@
           </ng-template>
         </div>
         <div class="chat-info ms-2">
-          <div class="chat-name">{{ conv.emisorId === userId ? conv.receptorName : conv.emisorName }}</div>
+          <div class="chat-name">{{ conv.userId1 === userId ? conv.userName2 : conv.userName1 }}</div>
           <div class="chat-last-message text-truncate">{{ conv.ultimoMensaje.contenido }}</div>
         </div>
       </div>

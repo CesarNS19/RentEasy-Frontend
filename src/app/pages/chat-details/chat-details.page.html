@@ -1,37 +1,56 @@
-<div class="chat-page">
+<div class="chat-page" (click)="cancelEditOnClick($event)">
   <div class="chat-topbar d-flex align-items-center">
     <button class="btn btn-link me-2" (click)="volverAChatGroup()">
       <i class="bi bi-arrow-left"></i>
     </button>
 
     <div class="user-icon me-2">
-      <img *ngIf="receiverImageUrl; else defaultIcon" 
-           [src]="receiverImageUrl" 
-           alt="Usuario" 
-           class="rounded-circle" 
+      <img *ngIf="receiverImageUrl; else defaultIcon"
+           [src]="receiverImageUrl"
+           alt="Usuario"
+           class="rounded-circle"
            style="width: 40px; height: 40px; object-fit: cover;">
       <ng-template #defaultIcon>
         <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
       </ng-template>
     </div>
 
-    <div class="user-name">
-      {{ receiverName }}
-    </div>
+    <div class="user-name">{{ receiverName }}</div>
   </div>
 
-  <div class="chat-container" #chatContainer>
+  <div class="chat-container" id="chat-container">
     <div *ngFor="let msg of messages"
-         class="chat-bubble"
-         [ngClass]="{'sent': msg.emisorId === userId, 'received': msg.emisorId !== userId}">
-      {{ msg.contenido }}
-      <span class="time">{{ msg.fecha | date:'shortTime' }}</span>
-    </div>
+     class="chat-bubble"
+     [ngClass]="{ 'sent': msg.emisorId === userId, 'received': msg.emisorId !== userId }"
+     (press)="onMessagePress(msg, $event)"
+     (contextmenu)="onMessagePress(msg, $event)">
+  {{ msg.contenido }}
+  <span class="time">{{ msg.fecha | date:'shortTime' }}</span>
+</div>
+
   </div>
 
-  <div class="chat-input-bar d-flex">
-    <input #chatInput type="text" [(ngModel)]="message" placeholder="Escribe un mensaje..."
-          (keyup.enter)="sendMessage()" class="form-control me-2"/>
-    <button class="btn btn-send" (click)="sendMessage()">Enviar</button>
+  <div class="chat-input-bar d-flex align-items-center">
+    <button *ngIf="editingMessageId"
+            class="btn btn-outline-secondary me-2"
+            (click)="cancelEdit()"
+            title="Cancelar edición">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <input #chatInput
+           type="text"
+           [(ngModel)]="message"
+           [ngClass]="{'edit-mode': editingMessageId}"
+           placeholder="{{ editingMessageId ? 'Editando mensaje...' : 'Escribe un mensaje...' }}"
+           (keyup.enter)="editingMessageId ? saveEdit() : sendMessage()"
+           class="form-control me-2"/>
+
+    <button class="btn btn-send"
+            (click)="editingMessageId ? saveEdit() : sendMessage()"
+            [title]="editingMessageId ? 'Actualizar mensaje' : 'Enviar mensaje'">
+      <i *ngIf="editingMessageId" class="bi bi-check-lg"></i>
+      <i *ngIf="!editingMessageId" class="bi bi-send-fill"></i>
+    </button>
   </div>
 </div>
