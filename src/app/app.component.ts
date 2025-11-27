@@ -106,7 +106,7 @@ import { AuthService } from './services/auth';
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       position: sticky;
       top: 0;
-      height: 67px;
+      height: 80px;
       z-index: 1000;
       background: linear-gradient(90deg, #009688, #26a69a); /* verde azulado */
       color: #ffffff;

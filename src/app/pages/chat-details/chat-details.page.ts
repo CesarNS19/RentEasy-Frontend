@@ -1,8 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChatService, Mensaje } from '../../services/chat';
 import { AuthService } from '../../services/auth';
-import { ActionSheetController, Platform } from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'app-chat-details',
@@ -10,7 +10,7 @@ import { ActionSheetController, Platform } from '@ionic/angular';
   styleUrls: ['./chat-details.page.scss'],
   standalone: false
 })
-export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
+export class ChatDetailsPage implements OnInit {
 
   message = '';
   messages: Mensaje[] = [];
@@ -27,48 +27,26 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
     private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private actionSheetCtrl: ActionSheetController,
-    private platform: Platform
+    private actionSheetCtrl: ActionSheetController
   ) {
     this.userId = auth.getUserId()!;
   }
 
   ngOnInit() {
     this.userId = this.auth.getUserId()!;
+
     this.route.queryParams.subscribe(params => {
       this.receiverId = Number(params['receiverId']);
       this.receiverName = params['receiverName'] || 'Usuario';
       this.receiverImageUrl = params['receiverImageUrl'];
+
       if (this.userId === this.receiverId) {
         this.router.navigate(['/propiedades']);
         return;
       }
+
       this.loadMessages();
     });
-  }
-
-  ngAfterViewInit() {
-    if (this.platform.is('cordova') || this.platform.is('capacitor')) {
-      window.addEventListener('keyboardWillShow', this.onKeyboardShow);
-      window.addEventListener('keyboardWillHide', this.onKeyboardHide);
-    }
-  }
-
-  ngOnDestroy() {
-    window.removeEventListener('keyboardWillShow', this.onKeyboardShow);
-    window.removeEventListener('keyboardWillHide', this.onKeyboardHide);
-  }
-
-  onKeyboardShow = (event: any) => {
-    const kbHeight = event.keyboardHeight || 300;
-    const inputBar = document.querySelector<HTMLElement>('.chat-input-bar');
-    if (inputBar) inputBar.style.bottom = kbHeight + 'px';
-    setTimeout(() => this.scrollBottom(), 200);
-  }
-
-  onKeyboardHide = () => {
-    const inputBar = document.querySelector<HTMLElement>('.chat-input-bar');
-    if (inputBar) inputBar.style.bottom = '0px';
   }
 
   loadMessages() {
@@ -99,6 +77,7 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
   async onMessagePress(msg: Mensaje, event: Event) {  
     event.preventDefault();
     if (msg.emisorId !== this.userId) return;
+
     const actionSheet = await this.actionSheetCtrl.create({
       cssClass: 'custom-action-sheet',
       buttons: [
@@ -136,6 +115,7 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
         }
       ]
     });
+
     await actionSheet.present();
   }
 
@@ -146,15 +126,19 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
 
   saveEdit() {
     if (!this.editingMessageId || !this.message.trim()) return;
+
     const msgEdit = this.messages.find(m => m.id === this.editingMessageId);
     if (!msgEdit) return;
+
     msgEdit.contenido = this.message;
+
     this.chatService.updateMessage({
       id: msgEdit.id!,
       contenido: msgEdit.contenido,
       userId: this.userId
     }).subscribe({
       next: () => {
+        console.log('Mensaje actualizado correctamente');
         this.editingMessageId = undefined;
         this.message = '';
         this.loadMessages(); 
@@ -179,8 +163,10 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
 
   deleteMessage(msg: Mensaje, forAll: boolean) {
     if (!msg.id) return;
+
     this.chatService.deleteMessage(msg.id, this.userId, forAll).subscribe({
       next: () => {
+        console.log(`Mensaje ${msg.id} eliminado ${forAll ? 'para todos' : 'solo para mí'}`);
         this.messages = this.messages.filter(m => m.id !== msg.id);
         this.scrollBottom();
       },
@@ -190,14 +176,17 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
 
   sendMessage() {
     if (!this.message.trim()) return;
+
     const mensajeLocal: Mensaje = {
       emisorId: this.userId,
       receptorId: this.receiverId,
       contenido: this.message,
       fecha: new Date().toISOString()
     };
+
     this.messages.push(mensajeLocal);
     this.scrollBottom();
+
     this.chatService.sendMessage(mensajeLocal).subscribe({
       next: res => {
         mensajeLocal.id = res.id;
@@ -207,13 +196,17 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
       },
       error: err => console.error('Error al enviar mensaje:', err)
     });
+
     this.message = '';
   }
 
   selectMessage(msg: Mensaje, event: Event) {
     event.stopPropagation();
-    if (this.selectedMessage?.id === msg.id) this.selectedMessage = undefined;
-    else this.selectedMessage = msg;
+    if (this.selectedMessage?.id === msg.id) {
+      this.selectedMessage = undefined;
+    } else {
+      this.selectedMessage = msg;
+    }
   }
 
   deselectMessage() {
@@ -226,3 +219,4 @@ export class ChatDetailsPage implements OnInit, AfterViewInit, OnDestroy {
     this.deselectMessage();
   }
 }
+

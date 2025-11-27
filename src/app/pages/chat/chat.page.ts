@@ -73,18 +73,6 @@ export class ChatPage implements OnInit {
     });
   }
 
-  onKeyboardShow = (event: any) => {
-    const kbHeight = event.keyboardHeight || 300;
-    const inputBar = document.querySelector<HTMLElement>('.chat-input-bar');
-    if (inputBar) inputBar.style.bottom = kbHeight + 'px';
-    setTimeout(() => this.scrollBottom(), 200);
-  }
-
-  onKeyboardHide = () => {
-    const inputBar = document.querySelector<HTMLElement>('.chat-input-bar');
-    if (inputBar) inputBar.style.bottom = '0px';
-  }
-
   async onMessagePress(msg: Mensaje, event: Event) {  
     event.preventDefault();
     if (msg.emisorId !== this.userId) return;
