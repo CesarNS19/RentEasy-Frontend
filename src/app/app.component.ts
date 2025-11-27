@@ -16,10 +16,8 @@ import { AuthService } from './services/auth';
         <button class="btn-toggle" (click)="toggleSidebar()">
           <i class="bi bi-list text-dark"></i>
         </button>
-        <h1>RentEasy</h1>
-
         <div class="user-info">
-          <span>{{ username }}</span>
+          <span>Bienvenido {{ username }}</span>
           <button class="btn-logout" (click)="logout()">
             <i class="bi bi-box-arrow-right"></i>
           </button>
@@ -108,16 +106,11 @@ import { AuthService } from './services/auth';
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       position: sticky;
       top: 0;
-      height: 60px;
+      height: 67px;
       z-index: 1000;
       background: linear-gradient(90deg, #009688, #26a69a); /* verde azulado */
       color: #ffffff;
       font-family: 'Segoe UI', sans-serif;
-    }
-    .topbar h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 600;
     }
     .btn-toggle {
       font-size: 1.5rem;

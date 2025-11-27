@@ -102,7 +102,11 @@ export class PropiedadFormPage implements OnInit {
   guardarPropiedad(event: Event) {
     event.preventDefault();
 
-    if (!this.propiedad.titulo.trim() || !this.propiedad.descripcion.trim() || !this.propiedad.tipo.trim() || !this.propiedad.ubicacion.trim() || !this.propiedad.precio || this.propiedad.precio <= 0) {
+    if (!this.propiedad.titulo.trim() ||
+        !this.propiedad.descripcion.trim() ||
+        !this.propiedad.tipo.trim() ||
+        !this.propiedad.ubicacion.trim() ||
+        !this.propiedad.precio || this.propiedad.precio <= 0) {
       this.showToast('warning', 'Completa todos los campos antes de guardar');
       return;
     }
@@ -119,41 +123,44 @@ export class PropiedadFormPage implements OnInit {
     }
 
     this.cargando = true;
-    const subirNuevas = this.selectedFiles.length > 0
-      ? this.propiedadService.guardarImagenes(this.propiedad.id!, this.selectedFiles).toPromise()
-      : Promise.resolve({ imagenes: [] });
+    const payload: any = {
+      titulo: this.propiedad.titulo,
+      descripcion: this.propiedad.descripcion,
+      tipo: this.propiedad.tipo,
+      ubicacion: this.propiedad.ubicacion,
+      precio: this.propiedad.precio,
+      estado: this.propiedad.estado || 'disponible',
+      propietarioId: userId,
+      imagenes: this.existingImages
+    };
+    const request$ = this.propiedad.id
+      ? this.propiedadService.editar(this.propiedad.id, payload)
+      : this.propiedadService.crear(payload);
 
-    subirNuevas.then((res: any) => {
-      const todasImagenes = [...this.existingImages, ...(res.imagenes || [])];
+    request$.subscribe({
+      next: (res: any) => {
+        const propiedadId = this.propiedad.id || res.id;
 
-      const payload: any = {
-        titulo: this.propiedad.titulo,
-        descripcion: this.propiedad.descripcion,
-        tipo: this.propiedad.tipo,
-        ubicacion: this.propiedad.ubicacion,
-        precio: this.propiedad.precio,
-        estado: this.propiedad.estado || 'disponible',
-        propietarioId: userId,
-        imagenes: todasImagenes
-      };
-
-      if (this.propiedad.id) payload.id = this.propiedad.id;
-
-      const request$ = this.propiedad.id
-        ? this.propiedadService.editar(this.propiedad.id, payload)
-        : this.propiedadService.crear(payload);
-
-      request$.subscribe({
-        next: () => this.finalizarGuardado(),
-        error: () => {
-          this.showToast('error', 'Error al guardar la propiedad');
-          this.cargando = false;
+        if (this.selectedFiles.length > 0) {
+          this.propiedadService.guardarImagenes(propiedadId, this.selectedFiles).subscribe({
+            next: (imgRes: any) => {
+              this.existingImages = [...this.existingImages, ...(imgRes.imagenes || [])];
+              this.finalizarGuardado(propiedadId);
+            },
+            error: () => this.errorImagenes()
+          });
+        } else {
+          this.finalizarGuardado(propiedadId);
         }
-      });
-    }).catch(() => this.errorImagenes());
+      },
+      error: () => {
+        this.showToast('error', 'Error al guardar la propiedad');
+        this.cargando = false;
+      }
+    });
   }
 
-  finalizarGuardado() {
+  finalizarGuardado(propiedadId: number) {
     this.showToast('success', this.propiedad.id ? 'Propiedad editada' : 'Propiedad creada');
     bootstrap.Modal.getInstance(document.getElementById('modalPropiedad')!)?.hide();
     this.limpiarFormulario();
@@ -240,7 +247,7 @@ export class PropiedadFormPage implements OnInit {
     this.propiedadService.editStatus(prop.id!, estado).subscribe({
       next: res => {
         prop.estado = res.estado;
-        this.showToast('success', `Estado actualizado a ${estado}`);
+        this.showToast('success', `Propiedad ${estado}`);
         this.cargarPropiedades();
       },
       error: () => this.showToast('error', 'No se pudo actualizar el estado')
@@ -256,6 +263,9 @@ export class PropiedadFormPage implements OnInit {
       showConfirmButton: false,
       timer: 2500,
       timerProgressBar: true,
+      customClass: {
+        container: 'swal-toast-container'
+      }
     });
   }
 }

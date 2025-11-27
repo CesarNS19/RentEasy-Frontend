@@ -1,7 +1,8 @@
-.chat-page {
+.chat-page { 
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
 }
 
 .chat-topbar {
@@ -11,13 +12,21 @@
   padding: 10px;
   background-color: #009688;
   color: white;
+  height: 80px;
   font-weight: 500;
   font-size: 1rem;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .chat-topbar .user-icon i {
   font-size: 1.5rem;
+}
+
+.user-icon .user-name {
+  margin-top: 50px;
 }
 
 .chat-container {
@@ -65,8 +74,10 @@
   padding: 10px;
   flex-shrink: 0;
   background-color: #f0f0f0;
-  position: relative;
-  z-index: 2;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  transition: bottom 0.25s;
 }
 
 .chat-input-bar input {
@@ -86,7 +97,7 @@
   color: white;
 }
 
-.btn-send{
+.btn-send {
   background-color: #009688;
   border: none;
   color: white;
@@ -95,4 +106,31 @@
 .edit-mode {
   border: 2px solid #ff9800 !important;
   background-color: #fff3e0 !important;
+}
+
+.custom-action-sheet .action-sheet-button {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.edit-button {
+  color: #1976d2;
+}
+
+.delete-button {
+  color: #d32f2f;
+}
+
+.delete-me-button {
+  color: #f57c00;
+}
+
+.delete-all-button {
+  color: #c2185b;
+}
+
+.custom-action-sheet .action-sheet-title {
+  background-color: #f1f1f1;
+  color: #333;
+  font-weight: bold;
 }
