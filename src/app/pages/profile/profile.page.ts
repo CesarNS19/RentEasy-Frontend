@@ -16,6 +16,7 @@ export class ProfilePage implements OnInit {
   username: string = '';
   password: string = '';
   telefono : string = '';
+  email : string = '';
   imageFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   modalInstance: any;
@@ -39,12 +40,14 @@ export class ProfilePage implements OnInit {
       const data = await res.json();
       this.user = {
         username: data.data.username,
-        telefono : data.data.telefono || null,
+        telefono : data.data.telefono,
+        email : data.data.email,
         imageUrl: data.data.image_url || null
       };
 
       this.username = this.user.username;
       this.telefono = this.user.telefono;
+      this.email = this.user.email;
       this.imagePreview = this.user.imageUrl;
 
     } catch (err: any) {
@@ -73,6 +76,7 @@ export class ProfilePage implements OnInit {
     const formData = new FormData();
     formData.append('username', this.username);
     formData.append('telefono', this.telefono);
+    formData.append('email', this.email);
     if (this.password.trim()) formData.append('password', this.password.trim());
     if (this.imageFile) formData.append('image', this.imageFile);
 

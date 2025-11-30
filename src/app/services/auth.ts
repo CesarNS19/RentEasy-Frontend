@@ -136,8 +136,14 @@ export class AuthService {
     }
   }
 
-  async register(username: string, password: string, role: string) {
-    if (!username.trim() || !password.trim() || !role.trim()) {
+  async register(username: string, email: string, telefono: string, password: string, role: string) {
+    if (
+      !username.trim() ||
+      !email.trim() ||
+      !telefono.toString().trim() ||
+      !password.trim() ||
+      !role.trim()
+    ) {
       Swal.fire({
         toast: true,
         icon: 'warning',
@@ -164,7 +170,7 @@ export class AuthService {
     }
 
     try {
-      const res = await axios.post(API + 'register.php', { username, password, role });
+      const res = await axios.post(API + 'register.php', { username, email, telefono, password, role });
       Swal.fire({
         toast: true,
         icon: 'success',

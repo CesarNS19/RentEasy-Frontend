@@ -15,13 +15,15 @@ import { Router } from '@angular/router';
 export class RegistroPage {
   username = '';
   password = '';
+  email = '';
+  telefono = '';
   rol = 'INQUILINO';
 
   constructor(private auth: AuthService, private router: Router) {}
 
   async register() {
     try {
-      const data = await this.auth.register(this.username, this.password, this.rol);
+      const data = await this.auth.register(this.username, this.email, this.telefono, this.password, this.rol);
       if (data) {
         this.router.navigateByUrl('/login');
       }
