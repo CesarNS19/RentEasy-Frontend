@@ -2,9 +2,23 @@
   <div class="card mx-auto" style="max-width: 400px;">
     <img *ngIf="user.imageUrl" [src]="user.imageUrl" class="card-img-top" alt="Imagen de usuario">
     <div class="card-body text-center">
-      <h5 class="card-title">{{ user.username }}</h5>
-      <h5 class="card-title">{{ user.email }}</h5>
-      <h5 class="card-title">{{ user.telefono }}</h5>
+
+      <div class="row justify-content-center mb-2">
+        <div class="col-6 d-flex align-items-center justify-content-center">
+          <i class="bi bi-person-circle icon-user"></i>
+          <span class="ms-2">{{ user.username }}</span>
+        </div>
+        <div class="col-6 d-flex align-items-center justify-content-center">
+          <i class="bi bi-telephone-fill icon-phone"></i>
+          <span class="ms-2">{{ user.telefono }}</span>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-center mb-3">
+        <i class="bi bi-envelope-fill icon-email"></i>
+        <span class="ms-2">{{ user.email }}</span>
+      </div>
+
       <button class="btn btn-edit" (click)="openModal()">Editar perfil</button>
     </div>
   </div>

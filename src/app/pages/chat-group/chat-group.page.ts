@@ -30,11 +30,6 @@ export class ChatGroupPage implements OnInit {
   cargarConversaciones() {
     this.chatService.listarConversaciones(this.userId).subscribe(res => {
       this.conversaciones = res
-        .map(conv => ({
-          ...conv,
-          userImage1: conv.userImage1 || 'assets/default-user.png',
-          userImage2: conv.userImage2 || 'assets/default-user.png'
-        }))
         .sort((a, b) =>
           new Date(b.ultimoMensaje.fecha!).getTime() - new Date(a.ultimoMensaje.fecha!).getTime()
         );
