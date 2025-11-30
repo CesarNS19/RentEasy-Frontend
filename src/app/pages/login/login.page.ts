@@ -64,6 +64,10 @@ export class LoginPage {
     this.router.navigate(['/registro']);
   }
 
+  goRecovery() {
+    this.router.navigate(['/recovery-password']);
+  }
+
   ngOnInit() {
     if (localStorage.getItem('rememberMe') === 'true') {
       this.username = localStorage.getItem('savedUser') || '';

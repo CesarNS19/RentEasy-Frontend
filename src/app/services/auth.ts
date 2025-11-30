@@ -191,6 +191,72 @@ export class AuthService {
     }
   }
 
+  async recoverPassword(email: string) {
+    try {
+      const res = await axios.post(API + 'recovery_password.php', { email });
+
+      Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: 'Correo enviado',
+        text: 'Hemos enviado instrucciones a tu correo.',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+      });
+
+      return res.data;
+    } catch {
+      Swal.fire({
+        toast: true,
+        icon: 'error',
+        title: 'Error al enviar correo',
+        text: 'Verifica el correo o intenta más tarde.',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+      });
+      return null;
+    }
+  }
+
+  async confirmRecovery(code: string, newPassword: string, confirmPassword: string) {
+    try {
+      const res = await axios.post(API + 'reset_password.php', { 
+        code, 
+        password: newPassword, 
+        confirm_password: confirmPassword 
+      });
+
+      Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: 'Contraseña actualizada',
+        text: 'Ahora puedes iniciar sesión con tu nueva contraseña.',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+      });
+
+      return res.data;
+    } catch {
+      Swal.fire({
+        toast: true,
+        icon: 'error',
+        title: 'Error al actualizar',
+        text: 'Verifica el código o intenta nuevamente.',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+      });
+      return null;
+    }
+  }
+
   logout() {
     localStorage.removeItem(this.loginKey);
     localStorage.removeItem(this.roleKey);

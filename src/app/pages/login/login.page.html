@@ -30,7 +30,7 @@
         <input class="form-check-input" type="checkbox" id="recordarme" [(ngModel)]="rememberMe">
         <label class="form-check-label" for="recordarme">Recordarme</label>
       </div>
-      <a class="auth-link">¿Olvidaste tu contraseña?</a>
+      <a (click)="goRecovery()" class="auth-link">¿Olvidaste tu contraseña?</a>
     </div>
 
     <button class="btn auth-btn w-100 mt-4" (click)="login()">Entrar</button>

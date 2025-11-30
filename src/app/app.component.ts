@@ -73,15 +73,15 @@ import { AuthService } from './services/auth';
       <nav class="bottom-nav">
           <a routerLink="/propiedades" routerLinkActive="active">
         <i class="bi bi-building"></i>
-        <span>Propiedades</span>
+        <span></span>
       </a>
       <a routerLink="/home" routerLinkActive="active">
         <i class="bi bi-house"></i>
-        <span>Inicio</span>
+        <span></span>
       </a>
       <a routerLink="/chat-group" routerLinkActive="active">
         <i class="bi bi-chat-dots"></i>
-        <span>Chats</span>
+        <span></span>
       </a>
     </nav>
 
@@ -215,7 +215,7 @@ import { AuthService } from './services/auth';
       position: fixed;
       bottom: 0;
       width: 100%;
-      height: 65px;
+      height: 40px;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -282,7 +282,7 @@ export class AppComponent implements OnInit {
     .pipe(filter((event) => event instanceof NavigationEnd))
     .subscribe((event: any) => {
       const url = event.urlAfterRedirects.split('?')[0];
-      const hiddenRoutes = ['/', '/login', '/registro', '/chat-details', '/chat'];
+      const hiddenRoutes = ['/', '/login', '/registro', '/chat-details', '/chat', '/recovery-password'];
       this.showLayout = !hiddenRoutes.includes(url);
       this.isSidebarOpen = false;
     });
