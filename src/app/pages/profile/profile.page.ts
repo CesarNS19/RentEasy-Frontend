@@ -90,12 +90,18 @@ export class ProfilePage implements OnInit {
       Swal.fire({ toast: true, icon: 'success', title: 'Perfil actualizado', position: 'top-end', timer: 2000, showConfirmButton: false });
 
       localStorage.setItem('renteasy_user', this.username);
-      if (this.imageFile && this.imagePreview) localStorage.setItem('userImage', this.imagePreview as string);
 
-      this.loadUser();
       this.modalInstance?.hide();
       this.password = '';
       this.imageFile = null;
+
+      await this.loadUser();
+
+      if (this.user?.imageUrl) {
+        this.user.imageUrl = `${this.user.imageUrl}?t=${Date.now()}`;
+        this.imagePreview = this.user.imageUrl;
+        localStorage.setItem('userImage', this.imagePreview ? this.imagePreview.toString() : '');
+      }
 
     } catch (e: any) {
       Swal.fire({ toast: true, icon: 'error', title: e.message, position: 'top-end', timer: 2500, showConfirmButton: false });

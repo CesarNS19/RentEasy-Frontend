@@ -76,19 +76,20 @@
           </div>
 
           <div class="card-footer-propiedad mt-2 d-flex flex-wrap gap-2">
-            <button *ngIf="p.propietario?.id" class="btn btn-chat btn-primary" 
-                    (click)="openChat({ 
-                        id: p.propietario?.id!, 
-                        username: p.propietario?.username!, 
-                        imageUrl: p.propietario?.imageUrl 
-                    })">
-              <i class="bi bi-chat-dots"></i> Chat
-            </button>
+              <button *ngIf="p.propietario?.id !== currentUserId"
+                      class="btn btn-chat btn-primary"
+                      (click)="openChat({ 
+                          id: p.propietario?.id!, 
+                          username: p.propietario?.username!, 
+                          imageUrl: p.propietario?.imageUrl 
+                      })">
+                <i class="bi bi-chat-dots"></i> Chat
+              </button>
 
               <button class="btn btn-ver" (click)="verOpiniones(p.id)">
                 <i class="bi bi-chat-left-text me-1"></i> Comentarios
               </button>
-              <button *ngIf="!calificadoPropiedades.includes(p.id) && !p.calificado" 
+              <button *ngIf="!calificadoPropiedades.includes(p.id) && !p.calificado && p.propietario?.id !== currentUserId" 
                       class="btn btn-opinar" 
                       (click)="openCalificar(p.id)">
                 <i class="bi bi-star"></i> Calificar
